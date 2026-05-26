@@ -6,139 +6,74 @@
     <title>База Знаний (Wiki) втуберов - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .wiki-detail {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 40px;
-        }
-        .wiki-header {
-            display: flex;
-            gap: 35px;
-            margin-bottom: 30px;
-        }
-        @media (max-width: 768px) {
-            .wiki-header {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-        .wiki-photo-slider {
-            width: 300px;
-            height: 300px;
-            background-color: #1A1A1A;
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .wiki-photo-slider img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .wiki-bio {
-            flex-grow: 1;
-        }
-        .wiki-name {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        .social-btn {
-            background-color: #222;
-            color: var(--text-main);
-            padding: 8px 18px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 13px;
-            transition: background-color 0.2s;
-        }
-        .social-btn:hover {
-            background-color: #333;
-        }
-        .wiki-text {
-            color: var(--text-muted);
-            font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.7;
-        }
+        .wiki-detail { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 40px; }
+        .wiki-header { display: flex; gap: 35px; margin-bottom: 30px; }
+        @media (max-width: 768px) { .wiki-header { flex-direction: column; align-items: center; text-align: center; } }
+        .wiki-photo-slider { width: 300px; height: 300px; background-color: #1A1A1A; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .wiki-photo-slider img { width: 100%; height: 100%; object-fit: cover; }
+        .wiki-bio { flex-grow: 1; }
+        .wiki-name { font-size: 36px; font-weight: 800; margin-bottom: 15px; }
+        .social-links { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        @media (max-width: 768px) { .social-links { justify-content: center; } }
+        .social-btn { background-color: #222; color: var(--text-main); padding: 8px 18px; border-radius: 4px; text-decoration: none; font-size: 13px; transition: background-color 0.2s; }
+        .social-btn:hover { background-color: #333; }
+        .wiki-text { color: var(--text-muted); font-size: 16px; margin-bottom: 30px; line-height: 1.7; }
+        .arts-gallery-title { margin-top: 40px; margin-bottom: 20px; font-size: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .arts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .art-card { border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background-color: #0E0E0E; }
+        .art-card img { width: 100%; height: 180px; object-fit: cover; }
+        .art-caption { padding: 10px; font-size: 12px; color: var(--text-muted); text-align: center; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-dot"></div>
-                VTUBER HUB
-            </a>
-            <nav>
-                <a href="index.html">Главная</a>
-                <a href="wiki.html" class="active">Втуберы (Вики)</a>
-                <a href="shop.html">Магазин</a>
-                <a href="account.html">Кабинет</a>
-                <a href="admin.html">Панель</a>
-                <a class="cart-trigger" onclick="toggleCart()">
-                    Корзина <span class="cart-badge" id="cart-count">0</span>
-                </a>
-            </nav>
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
         </div>
     </header>
-
     <main>
         <div class="two-column-layout">
             <div class="sidebar">
                 <input type="text" class="search-bar" placeholder="Поиск втубера..." id="wiki-search" oninput="filterWikiList()">
                 <div class="list-title">Список стримеров</div>
-                <ul class="sidebar-list" id="wiki-streamers-list">
-                    <!-- Dynamic List -->
-                </ul>
+                <ul class="sidebar-list" id="wiki-streamers-list"></ul>
             </div>
-            <div class="wiki-detail" id="wiki-content-panel">
-                <!-- Selected Vtuber details render here -->
-            </div>
+            <div class="wiki-detail" id="wiki-content-panel"></div>
         </div>
     </main>
-
     <footer>
         <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
         <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
     </footer>
-
     <script src="app.js"></script>
     <script>
         let selectedVtuberId = "gura";
-
         function renderWikiList() {
             const vtubers = getVtubers();
             const query = document.getElementById('wiki-search').value.toLowerCase();
             const listContainer = document.getElementById('wiki-streamers-list');
-            
             const filtered = vtubers.filter(v => v.name.toLowerCase().includes(query));
-
             listContainer.innerHTML = filtered.map(v => `
                 <li class="sidebar-item ${v.id === selectedVtuberId ? 'active' : ''}" onclick="selectVtuber('${v.id}')">${v.name}</li>
             `).join('');
         }
-
         function renderVtuberDetail() {
             const vtubers = getVtubers();
             const vtuber = vtubers.find(v => v.id === selectedVtuberId);
             const panel = document.getElementById('wiki-content-panel');
-
+            const arts = getArts().filter(art => art.streamerId === selectedVtuberId);
             if (vtuber) {
+                const artsHtml = arts.length === 0 ? '<p style="color: var(--text-muted); font-size: 14px;">Арты пока не загружены.</p>' : 
+                    arts.map(a => `
+                        <div class="art-card">
+                            <img src="${a.imageUrl}" alt="${a.caption}">
+                            <div class="art-caption">${a.caption || 'Fanart'}</div>
+                        </div>
+                    `).join('');
                 panel.innerHTML = `
                     <div class="wiki-header">
-                        <div class="wiki-photo-slider">
-                            <img src="${vtuber.photo}" alt="${vtuber.name}">
-                        </div>
+                        <div class="wiki-photo-slider"><img src="${vtuber.photo}" alt="${vtuber.name}"></div>
                         <div class="wiki-bio">
                             <div class="wiki-name">${vtuber.name}</div>
                             <div class="wiki-text">${vtuber.desc}</div>
@@ -150,6 +85,8 @@
                             </div>
                         </div>
                     </div>
+                    <h3 class="arts-gallery-title">Галерея артов</h3>
+                    <div class="arts-grid">${artsHtml}</div>
                     <div style="border-top: 1px solid var(--border-color); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                         <div>
                             <h4 style="margin-bottom: 5px;">Вам нравится этот стример?</h4>
@@ -160,24 +97,12 @@
                 `;
             }
         }
-
-        function selectVtuber(id) {
-            selectedVtuberId = id;
-            renderWikiList();
-            renderVtuberDetail();
-        }
-
-        function filterWikiList() {
-            renderWikiList();
-        }
-
+        function selectVtuber(id) { selectedVtuberId = id; renderWikiList(); renderVtuberDetail(); }
+        function filterWikiList() { renderWikiList(); }
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if page opened with parameter (e.g. ?vtuber=calli)
             const urlParams = new URLSearchParams(window.location.search);
             const vtuberParam = urlParams.get('vtuber');
-            if (vtuberParam) {
-                selectedVtuberId = vtuberParam;
-            }
+            if (vtuberParam) { selectedVtuberId = vtuberParam; }
             renderWikiList();
             renderVtuberDetail();
         });

@@ -6,139 +6,45 @@
     <title>Официальный Мерч-Магазин - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-        .product-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
-            transition: transform 0.2s, border-color 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .product-card:hover {
-            transform: translateY(-3px);
-            border-color: #444;
-        }
-        .product-img {
-            height: 200px;
-            background-color: #1A1A1A;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            overflow: hidden;
-        }
-        .product-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .product-info {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .product-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .product-desc {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-        .product-price-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-        .product-price {
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .size-select {
-            background-color: #222;
-            border: 1px solid var(--border-color);
-            color: white;
-            font-size: 12px;
-            padding: 3px 5px;
-            border-radius: 4px;
-            outline: none;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-        .add-to-cart-btn {
-            background-color: transparent;
-            border: 1px solid var(--text-main);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
-            width: 100%;
-            font-weight: 600;
-        }
-        .add-to-cart-btn:hover {
-            background-color: var(--text-main);
-            color: var(--bg-color);
-        }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-3px); border-color: #444; }
+        .product-img { height: 200px; background-color: #1A1A1A; display: flex; align-items: center; justify-content: center; color: var(--text-muted); overflow: hidden; }
+        .product-img img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+        .product-desc { color: var(--text-muted); font-size: 12px; margin-bottom: 15px; flex-grow: 1; }
+        .product-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .product-price { font-weight: 700; font-size: 16px; }
+        .size-select { background-color: #222; border: 1px solid var(--border-color); color: white; font-size: 12px; padding: 3px 5px; border-radius: 4px; outline: none; margin-bottom: 10px; width: 100%; }
+        .add-to-cart-btn { background-color: transparent; border: 1px solid var(--text-main); color: var(--text-main); padding: 8px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; transition: background-color 0.2s, color 0.2s; width: 100%; font-weight: 600; }
+        .add-to-cart-btn:hover { background-color: var(--text-main); color: var(--bg-color); }
     </style>
 </head>
 <body>
-
     <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-dot"></div>
-                VTUBER HUB
-            </a>
-            <nav>
-                <a href="index.html">Главная</a>
-                <a href="wiki.html">Втуберы (Вики)</a>
-                <a href="shop.html" class="active">Магазин</a>
-                <a href="account.html">Кабинет</a>
-                <a href="admin.html">Панель</a>
-                <a class="cart-trigger" onclick="toggleCart()">
-                    Корзина <span class="cart-badge" id="cart-count">0</span>
-                </a>
-            </nav>
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
         </div>
     </header>
-
     <main>
         <div class="two-column-layout">
             <div class="sidebar">
                 <input type="text" class="search-bar" placeholder="Поиск мерча..." id="shop-search" oninput="filterShop()">
                 <div class="list-title">Фильтр по стримеру</div>
-                <ul class="sidebar-list" id="shop-streamers-list">
-                    <!-- Dynamic Streamer Filters -->
-                </ul>
+                <ul class="sidebar-list" id="shop-streamers-list"></ul>
             </div>
-            <div class="shop-grid" id="shop-products-grid">
-                <!-- Products Grid -->
-            </div>
+            <div class="shop-grid" id="shop-products-grid"></div>
         </div>
     </main>
-
     <footer>
         <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
         <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
     </footer>
-
     <script src="app.js"></script>
     <script>
         let selectedFilter = "all";
-
         function renderShopFilters() {
             const vtubers = getVtubers();
             const container = document.getElementById('shop-streamers-list');
@@ -148,39 +54,31 @@
                 <li class="sidebar-item ${selectedFilter === v.id ? 'active' : ''}" onclick="applyFilter('${v.id}')">Мерч ${v.name}</li>
             `).join('');
         }
-
         function renderProducts() {
             const products = getProducts();
             const grid = document.getElementById('shop-products-grid');
             const searchVal = document.getElementById('shop-search').value.toLowerCase();
-
             const filtered = products.filter(p => {
                 const matchesStreamer = selectedFilter === 'all' || p.vtuberId === selectedFilter;
                 const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
                 return matchesStreamer && matchesSearch;
             });
-
             if (filtered.length === 0) {
                 grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Товары не найдены</p>';
                 return;
             }
-
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card">
-                    <div class="product-img">
-                        <img src="${p.photo}" alt="${p.title}">
-                    </div>
+                    <div class="product-img"><img src="${p.photo}" alt="${p.title}"></div>
                     <div class="product-info">
                         <div class="product-title">${p.title}</div>
                         <div class="product-desc">${p.desc}</div>
-                        
                         <select class="size-select" id="size-select-${p.id}">
                             <option value="S">Размер: S</option>
                             <option value="M">Размер: M</option>
                             <option value="L">Размер: L</option>
                             <option value="XL">Размер: XL</option>
                         </select>
-                        
                         <div class="product-price-row">
                             <span class="product-price">${p.price} ₽</span>
                             <button class="add-to-cart-btn" onclick="addToCart(${p.id}, document.getElementById('size-select-${p.id}').value)">В корзину</button>
@@ -189,23 +87,12 @@
                 </div>
             `).join('');
         }
-
-        function applyFilter(id) {
-            selectedFilter = id;
-            renderShopFilters();
-            renderProducts();
-        }
-
-        function filterShop() {
-            renderProducts();
-        }
-
+        function applyFilter(id) { selectedFilter = id; renderShopFilters(); renderProducts(); }
+        function filterShop() { renderProducts(); }
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const streamerParam = urlParams.get('streamer');
-            if (streamerParam) {
-                selectedFilter = streamerParam;
-            }
+            if (streamerParam) { selectedFilter = streamerParam; }
             renderShopFilters();
             renderProducts();
         });

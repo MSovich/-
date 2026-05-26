@@ -3,219 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель Менеджера (Администратор) - VTuber Hub</title>
+    <title>Панель управления - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-layout {
-            display: grid;
-            grid-template-columns: 220px 1fr;
-            gap: 40px;
+        .admin-layout { display: grid; grid-template-columns: 240px 1fr; gap: 40px; }
+        @media (max-width: 992px) {
+            .admin-layout { grid-template-columns: 1fr; gap: 20px; }
+            .admin-sidebar { flex-direction: row !important; overflow-x: auto; padding-bottom: 10px; }
+            .admin-tab-btn { white-space: nowrap; }
         }
-        @media (max-width: 768px) {
-            .admin-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-        .admin-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .admin-tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            text-align: left;
-            padding: 12px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .admin-tab-btn:hover, .admin-tab-btn.active {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-        }
-        .admin-content {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-        }
-        .admin-panel {
-            display: none;
-        }
-        .admin-panel.active {
-            display: block;
-        }
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            text-align: left;
-        }
-        .admin-table th, .admin-table td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .admin-table th {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-        }
+        .admin-sidebar { display: flex; flex-direction: column; gap: 8px; }
+        .admin-tab-btn { background: none; border: none; color: var(--text-muted); text-align: left; padding: 12px 15px; font-size: 14px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s, color 0.2s; }
+        .admin-tab-btn:hover, .admin-tab-btn.active { background-color: var(--card-bg); color: var(--text-main); }
+        .admin-content { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 30px; }
+        .admin-panel { display: none; }
+        .admin-panel.active { display: block; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+        .admin-table th, .admin-table td { padding: 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .admin-table th { color: var(--text-muted); font-weight: 600; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .status-badge.new { background-color: rgba(230, 57, 70, 0.1); color: #E63946; }
         .status-badge.work { background-color: rgba(255, 204, 0, 0.1); color: #FFCC00; }
         .status-badge.delivery { background-color: rgba(58, 134, 255, 0.1); color: #3A86FF; }
         .status-badge.done { background-color: rgba(75, 181, 67, 0.1); color: #4BB543; }
-
-        .btn-status-change {
-            background-color: #222;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
+        .card-manager { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .admin-card { background-color: #0E0E0E; border: 1px solid var(--border-color); padding: 20px; border-radius: 6px; }
+        .chat-manager-layout { display: grid; grid-template-columns: 200px 1fr; border: 1px solid var(--border-color); border-radius: 6px; height: 450px; }
+        @media (max-width: 768px) {
+            .chat-manager-layout { grid-template-columns: 1fr; }
+            .chat-rooms-list { border-bottom: 1px solid var(--border-color); height: 120px !important; }
         }
-        .btn-status-change:hover {
-            background-color: #333;
-        }
-        .card-manager {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-        .admin-card {
-            background-color: #0E0E0E;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 6px;
-        }
+        .chat-rooms-list { background-color: #080808; border-right: 1px solid var(--border-color); overflow-y: auto; height: 100%; }
+        .chat-room-item { padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; font-size: 13px; }
+        .chat-room-item:hover, .chat-room-item.active { background-color: #141414; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-dot"></div>
-                VTUBER HUB
-            </a>
-            <nav>
-                <a href="index.html">Главная</a>
-                <a href="wiki.html">Втуберы (Вики)</a>
-                <a href="shop.html">Магазин</a>
-                <a href="account.html">Кабинет</a>
-                <a href="admin.html" class="active">Панель</a>
-                <a class="cart-trigger" onclick="toggleCart()">
-                    Корзина <span class="cart-badge" id="cart-count">0</span>
-                </a>
-            </nav>
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
         </div>
     </header>
-
     <main>
-        <!-- Access Denied Screen -->
         <div id="denied-screen" style="text-align: center; padding: 60px 20px;">
             <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 20px;">Доступ ограничен</h2>
-            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 30px auto;">Вы вошли не под учетной записью администратора. Пожалуйста, войдите с логином "admin" в личном кабинете.</p>
-            <a href="account.html" class="btn-primary">Войти как Администратор</a>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 30px auto;">Вы вошли под аккаунтом с недостаточными правами. Войдите как модератор/администратор.</p>
+            <a href="account.html" class="btn-primary">В личный кабинет</a>
         </div>
-
-        <!-- Authorized Panel Layout -->
         <div id="authorized-layout" class="admin-layout" style="display: none;">
-            <div class="admin-sidebar">
-                <button class="admin-tab-btn active" id="tab-btn-orders" onclick="showAdminTab('orders')">Управление заказами</button>
-                <button class="admin-tab-btn" id="tab-btn-cards" onclick="showAdminTab('cards')">Карточки товаров</button>
-                <button class="admin-tab-btn" style="color: var(--accent-color); margin-top: 30px;" onclick="logout()">Выйти</button>
-            </div>
-            <div class="admin-content">
-                <!-- Panel: Orders -->
-                <div class="admin-panel active" id="panel-orders">
-                    <h3 style="margin-bottom: 20px;">Поступающие заказы</h3>
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Покупатель</th>
-                                <th>Детали заказа</th>
-                                <th>Сумма</th>
-                                <th>Статус</th>
-                                <th>Действие</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-orders-table-body">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+            <div class="admin-sidebar" id="sidebar-tabs-container"></div>
+            <div class="admin-content" id="admin-panels-container">
+                <div class="admin-panel" id="panel-orders">
+                    <h3 style="margin-bottom: 20px;">Управление заказами</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>ID</th><th>Покупатель</th><th>Детали заказа</th><th>Сумма</th><th>Статус</th><th>Адрес</th><th>Действие</th></tr>
+                            </thead>
+                            <tbody id="admin-orders-table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <!-- Panel: Cards -->
-                <div class="admin-panel" id="panel-cards">
+                <div class="admin-panel" id="panel-chats">
+                    <h3 style="margin-bottom: 20px;">Обращения клиентов</h3>
+                    <div class="chat-manager-layout">
+                        <div class="chat-rooms-list" id="manager-chat-rooms"></div>
+                        <div style="display: flex; flex-direction: column; height: 100%; background-color: #0E0E0E;">
+                            <div class="chat-messages" id="manager-chat-messages" style="flex-grow:1;">
+                                <div style="color: var(--text-muted); text-align:center; margin-top:150px;">Выберите чат слева</div>
+                            </div>
+                            <div class="chat-input-area" id="manager-input-panel" style="display:none;">
+                                <input type="text" class="chat-input" id="manager-chat-input" placeholder="Написать ответ...">
+                                <button class="chat-send-btn" onclick="sendManagerMessage()">Отправить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-panel" id="panel-streamers">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3>Редактор товаров магазина</h3>
-                        <button class="btn-secondary" style="font-size: 13px; padding: 8px 15px;" onclick="addNewProduct()">+ Добавить новый</button>
+                        <h3>База Стримеров (Wiki)</h3>
+                        <button class="btn-secondary" onclick="addOrEditStreamerForm()">+ Добавить</button>
                     </div>
-                    <div class="card-manager" id="admin-cards-grid">
-                        <!-- Products rendered here to update -->
+                    <div class="card-manager" id="admin-streamers-grid"></div>
+                </div>
+                <div class="admin-panel" id="panel-arts">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Галерея артов</h3>
+                        <button class="btn-secondary" onclick="addArtForm()">+ Загрузить Арт</button>
                     </div>
+                    <div class="card-manager" id="admin-arts-grid"></div>
+                </div>
+                <div class="admin-panel" id="panel-news">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Редактор новостей</h3>
+                        <button class="btn-secondary" onclick="addNewsForm()">+ Опубликовать</button>
+                    </div>
+                    <div class="card-manager" id="admin-news-grid"></div>
+                </div>
+                <div class="admin-panel" id="panel-reviews">
+                    <h3 style="margin-bottom: 20px;">Модерация отзывов</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Автор</th><th>Текст</th><th>Статус</th><th>Действие</th></tr>
+                            </thead>
+                            <tbody id="admin-reviews-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-panel" id="panel-products">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Товары магазина</h3>
+                        <button class="btn-secondary" onclick="addNewProductForm()">+ Добавить</button>
+                    </div>
+                    <div class="card-manager" id="admin-cards-grid"></div>
+                </div>
+                <div class="admin-panel" id="panel-users">
+                    <h3 style="margin-bottom: 20px;">Пользователи</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Логин</th><th>Имя</th><th>Роль</th><th>Назначить роль</th></tr>
+                            </thead>
+                            <tbody id="admin-users-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-panel" id="panel-shipping">
+                    <h3 style="margin-bottom: 20px;">Настройки доставки</h3>
+                    <div class="card-manager" id="admin-shipping-grid"></div>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer>
-        <p>Панель управления защищена протоколом шифрования LocalSession.</p>
-        <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
-    </footer>
-
     <script src="app.js"></script>
     <script>
+        let currentActiveTab = '';
+        let selectedChatUser = '';
         function checkAdminAccess() {
             const user = getCurrentUser();
-            if (user && user.role === 'admin') {
+            if (user && user.role !== 'user') {
                 document.getElementById('denied-screen').style.display = 'none';
                 document.getElementById('authorized-layout').style.display = 'grid';
-                renderAdminOrders();
-                renderAdminProducts();
+                renderSidebarByRole(user.role);
             } else {
                 document.getElementById('denied-screen').style.display = 'block';
                 document.getElementById('authorized-layout').style.display = 'none';
             }
         }
-
+        function renderSidebarByRole(role) {
+            const container = document.getElementById('sidebar-tabs-container');
+            let tabs = [];
+            if (role === 'manager' || role === 'admin') {
+                tabs.push({ id: 'orders', name: 'Заказы' });
+                tabs.push({ id: 'chats', name: 'Поддержка (Чаты)' });
+            }
+            if (role === 'writer' || role === 'admin') {
+                tabs.push({ id: 'streamers', name: 'Стримеры (Wiki)' });
+                tabs.push({ id: 'arts', name: 'Галерея артов' });
+                tabs.push({ id: 'news', name: 'Новости сайта' });
+                tabs.push({ id: 'reviews', name: 'Модерация отзывов' });
+            }
+            if (role === 'admin') {
+                tabs.push({ id: 'products', name: 'Товары магазина' });
+                tabs.push({ id: 'users', name: 'Пользователи' });
+                tabs.push({ id: 'shipping', name: 'Настройки доставки' });
+            }
+            container.innerHTML = tabs.map((t, idx) => `
+                <button class="admin-tab-btn ${idx === 0 ? 'active' : ''}" id="tab-btn-${t.id}" onclick="showAdminTab('${t.id}')">${t.name}</button>
+            `).join('') + `<button class="admin-tab-btn" style="color: var(--accent-color); margin-top: 20px;" onclick="logout()">Выйти</button>`;
+            if (tabs.length > 0) { showAdminTab(tabs[0].id); }
+        }
         function showAdminTab(tabId) {
+            currentActiveTab = tabId;
             document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-
+            const btn = document.getElementById(`tab-btn-${tabId}`);
+            if (btn) btn.classList.add('active');
             document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
             document.getElementById(`panel-${tabId}`).classList.add('active');
+            if (tabId === 'orders') renderAdminOrders();
+            if (tabId === 'chats') renderManagerChats();
+            if (tabId === 'streamers') renderAdminStreamers();
+            if (tabId === 'arts') renderAdminArts();
+            if (tabId === 'news') renderAdminNews();
+            if (tabId === 'reviews') renderAdminReviews();
+            if (tabId === 'products') renderAdminProducts();
+            if (tabId === 'users') renderAdminUsers();
+            if (tabId === 'shipping') renderAdminShipping();
         }
-
-        // ORDERS MANAGEMENT
         function renderAdminOrders() {
             const orders = getOrders();
             const body = document.getElementById('admin-orders-table-body');
-
             if (orders.length === 0) {
-                body.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Заказов пока нет</td></tr>';
+                body.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Заказов пока нет</td></tr>';
                 return;
             }
-
             body.innerHTML = orders.map(o => {
-                let statusClass = "new";
-                let statusText = "Новый";
+                let statusClass = "new"; let statusText = "Новый";
                 if (o.status === "work") { statusClass = "work"; statusText = "В работе"; }
                 if (o.status === "delivery") { statusClass = "delivery"; statusText = "Доставка"; }
                 if (o.status === "done") { statusClass = "done"; statusText = "Завершен"; }
-
                 return `
                     <tr>
                         <td>#${o.id}</td>
@@ -223,14 +211,12 @@
                         <td>${o.item}</td>
                         <td><strong>${o.price} ₽</strong></td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td>
-                            <button class="btn-status-change" onclick="cycleOrderStatus(${o.id})">След. статус</button>
-                        </td>
+                        <td>${o.address || 'Не указан'}</td>
+                        <td><button class="btn-status-change" onclick="cycleOrderStatus(${o.id})">След. статус</button></td>
                     </tr>
                 `;
             }).join('');
         }
-
         function cycleOrderStatus(orderId) {
             let orders = getOrders();
             const order = orders.find(o => o.id === orderId);
@@ -239,76 +225,257 @@
                 else if (order.status === 'work') order.status = 'delivery';
                 else if (order.status === 'delivery') order.status = 'done';
                 else if (order.status === 'done') order.status = 'new';
-
                 localStorage.setItem('orders', JSON.stringify(orders));
                 renderAdminOrders();
             }
         }
-
-        // CARDS MANAGEMENT
+        function renderManagerChats() {
+            const chats = getSupportChats();
+            const roomsContainer = document.getElementById('manager-chat-rooms');
+            if (chats.length === 0) {
+                roomsContainer.innerHTML = '<div style="color:var(--text-muted); padding:20px; text-align:center;">Диалогов нет</div>';
+                return;
+            }
+            roomsContainer.innerHTML = chats.map(c => `
+                <div class="chat-room-item ${selectedChatUser === c.clientName ? 'active' : ''}" onclick="selectChatRoom('${c.clientName}')">
+                    <strong>${c.clientName}</strong>
+                    <div style="font-size:11px; color:var(--text-muted); text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
+                        ${c.messages[c.messages.length - 1]?.text || 'Нет сообщений'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        function selectChatRoom(username) {
+            selectedChatUser = username;
+            renderManagerChats();
+            const chats = getSupportChats();
+            const room = chats.find(c => c.clientName === username);
+            const messagesContainer = document.getElementById('manager-chat-messages');
+            const inputPanel = document.getElementById('manager-input-panel');
+            if (room) {
+                inputPanel.style.display = "flex";
+                messagesContainer.innerHTML = room.messages.map(m => `
+                    <div class="chat-msg ${m.senderId === username ? 'manager' : 'user'}" style="${m.senderId === username ? 'background-color:#222; align-self:flex-start;' : 'background-color:var(--accent-color); color:#FFF; align-self:flex-end;'}">
+                        <strong>${m.senderId}:</strong> ${m.text}
+                        <div style="font-size:9px; color:var(--text-muted); text-align:right; margin-top:4px;">${m.timestamp || ''}</div>
+                    </div>
+                `).join('');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+        function sendManagerMessage() {
+            const input = document.getElementById('manager-chat-input');
+            const text = input.value.trim();
+            if (!text || !selectedChatUser) return;
+            const currentUser = getCurrentUser();
+            let chats = getSupportChats();
+            let room = chats.find(c => c.clientName === selectedChatUser);
+            if (room) {
+                room.messages.push({ senderId: currentUser.name, text: text, timestamp: new Date().toLocaleString() });
+                localStorage.setItem('support_chats', JSON.stringify(chats));
+                selectChatRoom(selectedChatUser);
+                input.value = '';
+            }
+        }
+        function renderAdminStreamers() {
+            const streamers = getVtubers();
+            const grid = document.getElementById('admin-streamers-grid');
+            grid.innerHTML = streamers.map(s => `
+                <div class="admin-card">
+                    <div class="form-group"><label>Никнейм</label><input type="text" class="form-control" value="${s.name}" onchange="updateStreamerField('${s.id}', 'name', this.value)"></div>
+                    <div class="form-group"><label>Биография</label><textarea class="form-control" rows="3" onchange="updateStreamerField('${s.id}', 'desc', this.value)">${s.desc}</textarea></div>
+                    <div class="form-group"><label>Фото URL</label><input type="text" class="form-control" value="${s.photo}" onchange="updateStreamerField('${s.id}', 'photo', this.value)"></div>
+                    <button class="btn-danger" style="padding: 5px 10px; font-size:12px; width:100%;" onclick="deleteStreamer('${s.id}')">Удалить</button>
+                </div>
+            `).join('');
+        }
+        function updateStreamerField(id, field, value) {
+            let streamers = getVtubers();
+            let s = streamers.find(st => st.id === id);
+            if (s) { s[field] = value; localStorage.setItem('vtubers', JSON.stringify(streamers)); }
+        }
+        function addOrEditStreamerForm() {
+            const nick = prompt("Имя стримера:"); if (!nick) return;
+            const slug = nick.toLowerCase().replace(/\s+/g, '-');
+            let streamers = getVtubers();
+            streamers.push({ id: slug, name: nick, slug: slug, desc: "Описание...", socials: { twitch: "", youtube: "", twitter: "" }, photo: "https://images.unsplash.com/photo-1560942485-b2a11cc13456?w=400&q=80" });
+            localStorage.setItem('vtubers', JSON.stringify(streamers));
+            renderAdminStreamers();
+        }
+        function deleteStreamer(id) {
+            if (confirm("Удалить стримера?")) {
+                let streamers = getVtubers();
+                streamers = streamers.filter(s => s.id !== id);
+                localStorage.setItem('vtubers', JSON.stringify(streamers));
+                renderAdminStreamers();
+            }
+        }
+        function renderAdminArts() {
+            const arts = getArts();
+            const grid = document.getElementById('admin-arts-grid');
+            grid.innerHTML = arts.map(a => `
+                <div class="admin-card">
+                    <img src="${a.imageUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:4px; margin-bottom:10px;">
+                    <div class="form-group"><label>Название / Описание</label><input type="text" class="form-control" value="${a.caption}" onchange="updateArtField(${a.id}, 'caption', this.value)"></div>
+                    <button class="btn-danger" style="padding: 5px 10px; font-size:12px; width:100%;" onclick="deleteArt(${a.id})">Удалить</button>
+                </div>
+            `).join('');
+        }
+        function addArtForm() {
+            const url = prompt("URL изображения:"); if (!url) return;
+            const caption = prompt("Описание:");
+            const streamerId = prompt("Втубер (id):");
+            let arts = getArts();
+            arts.push({ id: Date.now(), streamerId, imageUrl: url, caption });
+            localStorage.setItem('arts', JSON.stringify(arts));
+            renderAdminArts();
+        }
+        function updateArtField(id, field, value) {
+            let arts = getArts();
+            let a = arts.find(art => art.id === id);
+            if (a) { a[field] = value; localStorage.setItem('arts', JSON.stringify(arts)); }
+        }
+        function deleteArt(id) {
+            if (confirm("Удалить?")) {
+                let arts = getArts(); arts = arts.filter(a => a.id !== id);
+                localStorage.setItem('arts', JSON.stringify(arts));
+                renderAdminArts();
+            }
+        }
+        function renderAdminNews() {
+            const news = getNews();
+            const grid = document.getElementById('admin-news-grid');
+            grid.innerHTML = news.map(n => `
+                <div class="admin-card">
+                    <div class="form-group"><label>Заголовок новости</label><input type="text" class="form-control" value="${n.title}" onchange="updateNewsField(${n.id}, 'title', this.value)"></div>
+                    <div class="form-group"><label>Текст новости</label><textarea class="form-control" rows="3" onchange="updateNewsField(${n.id}, 'content', this.value)">${n.content}</textarea></div>
+                    <button class="btn-danger" style="padding: 5px 10px; font-size:12px; width:100%;" onclick="deleteNews(${n.id})">Удалить</button>
+                </div>
+            `).join('');
+        }
+        function addNewsForm() {
+            const title = prompt("Заголовок новости:"); if (!title) return;
+            const content = prompt("Текст:");
+            let news = getNews();
+            news.push({ id: Date.now(), title, content, publishedAt: new Date().toLocaleDateString() });
+            localStorage.setItem('news', JSON.stringify(news));
+            renderAdminNews();
+        }
+        function updateNewsField(id, field, value) {
+            let news = getNews();
+            let n = news.find(item => item.id === id);
+            if (n) { n[field] = value; localStorage.setItem('news', JSON.stringify(news)); }
+        }
+        function deleteNews(id) {
+            if (confirm("Удалить новость?")) {
+                let news = getNews(); news = news.filter(n => n.id !== id);
+                localStorage.setItem('news', JSON.stringify(news));
+                renderAdminNews();
+            }
+        }
+        function renderAdminReviews() {
+            const reviews = getReviews();
+            const body = document.getElementById('admin-reviews-table-body');
+            body.innerHTML = reviews.map(r => `
+                <tr>
+                    <td><strong>${r.author}</strong></td>
+                    <td>${r.text}</td>
+                    <td>${r.approved ? '<span style="color:#4BB543;">Одобрен</span>' : '<span style="color:#FFCC00;">Ожидает</span>'}</td>
+                    <td>
+                        ${!r.approved ? `<button class="btn-secondary" style="padding:4px 8px; font-size:12px; margin-right:5px;" onclick="approveReview(${r.id})">Одобрить</button>` : ''}
+                        <button class="btn-danger" style="padding:4px 8px; font-size:12px;" onclick="deleteReview(${r.id})">Удалить</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        function approveReview(id) {
+            let reviews = getReviews();
+            let r = reviews.find(rev => rev.id === id);
+            if (r) { r.approved = true; localStorage.setItem('reviews', JSON.stringify(reviews)); renderAdminReviews(); }
+        }
+        function deleteReview(id) {
+            if (confirm("Удалить отзыв?")) {
+                let reviews = getReviews(); reviews = reviews.filter(r => r.id !== id);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                renderAdminReviews();
+            }
+        }
         function renderAdminProducts() {
             const products = getProducts();
             const vtubers = getVtubers();
             const grid = document.getElementById('admin-cards-grid');
-
             grid.innerHTML = products.map(p => `
                 <div class="admin-card">
-                    <div class="form-group">
-                        <label>Название товара</label>
-                        <input type="text" class="form-control" value="${p.title}" onchange="updateProductTitle(${p.id}, this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>Цена (₽)</label>
-                        <input type="number" class="form-control" value="${p.price}" onchange="updateProductPrice(${p.id}, this.value)">
-                    </div>
+                    <div class="form-group"><label>Название товара</label><input type="text" class="form-control" value="${p.title}" onchange="updateProductTitle(${p.id}, this.value)"></div>
+                    <div class="form-group"><label>Цена (₽)</label><input type="number" class="form-control" value="${p.price}" onchange="updateProductPrice(${p.id}, this.value)"></div>
                     <div class="form-group">
                         <label>Привязка к втуберу</label>
                         <select class="form-control" onchange="updateProductVtuber(${p.id}, this.value)">
                             ${vtubers.map(v => `<option value="${v.id}" ${v.id === p.vtuberId ? 'selected' : ''}>${v.name}</option>`).join('')}
                         </select>
                     </div>
+                    <button class="btn-danger" style="padding: 5px 10px; font-size:12px; width:100%;" onclick="deleteProduct(${p.id})">Удалить</button>
                 </div>
             `).join('');
         }
-
-        function updateProductTitle(productId, value) {
-            let products = getProducts();
-            const p = products.find(prod => prod.id === productId);
-            if (p) p.title = value;
-            localStorage.setItem('products', JSON.stringify(products));
-        }
-
-        function updateProductPrice(productId, value) {
-            let products = getProducts();
-            const p = products.find(prod => prod.id === productId);
-            if (p) p.price = parseInt(value) || 0;
-            localStorage.setItem('products', JSON.stringify(products));
-        }
-
-        function updateProductVtuber(productId, value) {
-            let products = getProducts();
-            const p = products.find(prod => prod.id === productId);
-            if (p) p.vtuberId = value;
-            localStorage.setItem('products', JSON.stringify(products));
-        }
-
-        function addNewProduct() {
+        function addNewProductForm() {
             let products = getProducts();
             const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            const newProd = {
-                id: newId,
-                vtuberId: "gura",
-                title: "Новый товар",
-                desc: "Описание нового лимитированного мерча",
-                price: 1500,
-                photo: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80"
-            };
-            products.push(newProd);
+            products.push({ id: newId, vtuberId: "gura", title: "Новый товар", desc: "Описание...", price: 1500, photo: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80" });
             localStorage.setItem('products', JSON.stringify(products));
             renderAdminProducts();
         }
-
-        window.addEventListener('DOMContentLoaded', checkAdminAccess);
+        function deleteProduct(productId) {
+            if (confirm("Удалить товар?")) {
+                let products = getProducts(); products = products.filter(p => p.id !== productId);
+                localStorage.setItem('products', JSON.stringify(products));
+                renderAdminProducts();
+            }
+        }
+        function renderAdminUsers() {
+            const users = getUsers();
+            const body = document.getElementById('admin-users-table-body');
+            const currentUser = getCurrentUser();
+            body.innerHTML = users.map(u => `
+                <tr>
+                    <td><strong>${u.username}</strong></td>
+                    <td>${u.name}</td>
+                    <td><span style="text-transform:uppercase;">${u.role}</span></td>
+                    <td>
+                        <select class="form-control" style="width:150px; display:inline-block;" ${u.username === currentUser.username ? 'disabled' : ''} onchange="changeUserRole('${u.username}', this.value)">
+                            <option value="user" ${u.role === 'user' ? 'selected' : ''}>USER</option>
+                            <option value="writer" ${u.role === 'writer' ? 'selected' : ''}>WRITER</option>
+                            <option value="manager" ${u.role === 'manager' ? 'selected' : ''}>MANAGER</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>ADMIN</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        function changeUserRole(username, newRole) {
+            let users = getUsers();
+            let u = users.find(usr => usr.username === username);
+            if (u) { u.role = newRole; localStorage.setItem('users', JSON.stringify(users)); alert(`Роль ${username} изменена на ${newRole}`); renderAdminUsers(); }
+        }
+        function renderAdminShipping() {
+            const shipping = getShippingSettings();
+            const grid = document.getElementById('admin-shipping-grid');
+            grid.innerHTML = shipping.map(s => `
+                <div class="admin-card">
+                    <div class="form-group"><label>Способ доставки</label><input type="text" class="form-control" value="${s.name}" onchange="updateShippingField('${s.id}', 'name', this.value)"></div>
+                    <div class="form-group"><label>Стоимость (₽)</label><input type="number" class="form-control" value="${s.price}" onchange="updateShippingField('${s.id}', 'price', this.value)"></div>
+                </div>
+            `).join('');
+        }
+        function updateShippingField(id, field, value) {
+            let shipping = getShippingSettings();
+            let s = shipping.find(ship => ship.id === id);
+            if (s) { s[field] = field === 'price' ? parseInt(value) || 0 : value; localStorage.setItem('shipping_settings', JSON.stringify(shipping)); }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAdminAccess();
+            setInterval(() => { if (currentActiveTab === 'chats') { renderManagerChats(); if (selectedChatUser) { selectChatRoom(selectedChatUser); } } }, 3000);
+        });
     </script>
 </body>
 </html>
