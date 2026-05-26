@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель Менеджера (Администратор) - VTuber Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 40px;
+        }
+        @media (max-width: 768px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        .admin-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .admin-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 12px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .admin-tab-btn:hover, .admin-tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+        }
+        .admin-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+        .admin-table th, .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .admin-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge.new { background-color: rgba(230, 57, 70, 0.1); color: #E63946; }
+        .status-badge.work { background-color: rgba(255, 204, 0, 0.1); color: #FFCC00; }
+        .status-badge.delivery { background-color: rgba(58, 134, 255, 0.1); color: #3A86FF; }
+        .status-badge.done { background-color: rgba(75, 181, 67, 0.1); color: #4BB543; }
+
+        .btn-status-change {
+            background-color: #222;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .btn-status-change:hover {
+            background-color: #333;
+        }
+        .card-manager {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .admin-card {
+            background-color: #0E0E0E;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-dot"></div>
+                VTUBER HUB
+            </a>
+            <nav>
+                <a href="index.html">Главная</a>
+                <a href="wiki.html">Втуберы (Вики)</a>
+                <a href="shop.html">Магазин</a>
+                <a href="account.html">Кабинет</a>
+                <a href="admin.html" class="active">Панель</a>
+                <a class="cart-trigger" onclick="toggleCart()">
+                    Корзина <span class="cart-badge" id="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Access Denied Screen -->
+        <div id="denied-screen" style="text-align: center; padding: 60px 20px;">
+            <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 20px;">Доступ ограничен</h2>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 30px auto;">Вы вошли не под учетной записью администратора. Пожалуйста, войдите с логином "admin" в личном кабинете.</p>
+            <a href="account.html" class="btn-primary">Войти как Администратор</a>
+        </div>
+
+        <!-- Authorized Panel Layout -->
+        <div id="authorized-layout" class="admin-layout" style="display: none;">
+            <div class="admin-sidebar">
+                <button class="admin-tab-btn active" id="tab-btn-orders" onclick="showAdminTab('orders')">Управление заказами</button>
+                <button class="admin-tab-btn" id="tab-btn-cards" onclick="showAdminTab('cards')">Карточки товаров</button>
+                <button class="admin-tab-btn" style="color: var(--accent-color); margin-top: 30px;" onclick="logout()">Выйти</button>
+            </div>
+            <div class="admin-content">
+                <!-- Panel: Orders -->
+                <div class="admin-panel active" id="panel-orders">
+                    <h3 style="margin-bottom: 20px;">Поступающие заказы</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Покупатель</th>
+                                <th>Детали заказа</th>
+                                <th>Сумма</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Panel: Cards -->
+                <div class="admin-panel" id="panel-cards">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Редактор товаров магазина</h3>
+                        <button class="btn-secondary" style="font-size: 13px; padding: 8px 15px;" onclick="addNewProduct()">+ Добавить новый</button>
+                    </div>
+                    <div class="card-manager" id="admin-cards-grid">
+                        <!-- Products rendered here to update -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Панель управления защищена протоколом шифрования LocalSession.</p>
+        <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        function checkAdminAccess() {
+            const user = getCurrentUser();
+            if (user && user.role === 'admin') {
+                document.getElementById('denied-screen').style.display = 'none';
+                document.getElementById('authorized-layout').style.display = 'grid';
+                renderAdminOrders();
+                renderAdminProducts();
+            } else {
+                document.getElementById('denied-screen').style.display = 'block';
+                document.getElementById('authorized-layout').style.display = 'none';
+            }
+        }
+
+        function showAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+
+            document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(`panel-${tabId}`).classList.add('active');
+        }
+
+        // ORDERS MANAGEMENT
+        function renderAdminOrders() {
+            const orders = getOrders();
+            const body = document.getElementById('admin-orders-table-body');
+
+            if (orders.length === 0) {
+                body.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Заказов пока нет</td></tr>';
+                return;
+            }
+
+            body.innerHTML = orders.map(o => {
+                let statusClass = "new";
+                let statusText = "Новый";
+                if (o.status === "work") { statusClass = "work"; statusText = "В работе"; }
+                if (o.status === "delivery") { statusClass = "delivery"; statusText = "Доставка"; }
+                if (o.status === "done") { statusClass = "done"; statusText = "Завершен"; }
+
+                return `
+                    <tr>
+                        <td>#${o.id}</td>
+                        <td><strong>${o.client}</strong></td>
+                        <td>${o.item}</td>
+                        <td><strong>${o.price} ₽</strong></td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn-status-change" onclick="cycleOrderStatus(${o.id})">След. статус</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function cycleOrderStatus(orderId) {
+            let orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                if (order.status === 'new') order.status = 'work';
+                else if (order.status === 'work') order.status = 'delivery';
+                else if (order.status === 'delivery') order.status = 'done';
+                else if (order.status === 'done') order.status = 'new';
+
+                localStorage.setItem('orders', JSON.stringify(orders));
+                renderAdminOrders();
+            }
+        }
+
+        // CARDS MANAGEMENT
+        function renderAdminProducts() {
+            const products = getProducts();
+            const vtubers = getVtubers();
+            const grid = document.getElementById('admin-cards-grid');
+
+            grid.innerHTML = products.map(p => `
+                <div class="admin-card">
+                    <div class="form-group">
+                        <label>Название товара</label>
+                        <input type="text" class="form-control" value="${p.title}" onchange="updateProductTitle(${p.id}, this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Цена (₽)</label>
+                        <input type="number" class="form-control" value="${p.price}" onchange="updateProductPrice(${p.id}, this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Привязка к втуберу</label>
+                        <select class="form-control" onchange="updateProductVtuber(${p.id}, this.value)">
+                            ${vtubers.map(v => `<option value="${v.id}" ${v.id === p.vtuberId ? 'selected' : ''}>${v.name}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateProductTitle(productId, value) {
+            let products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (p) p.title = value;
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function updateProductPrice(productId, value) {
+            let products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (p) p.price = parseInt(value) || 0;
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function updateProductVtuber(productId, value) {
+            let products = getProducts();
+            const p = products.find(prod => prod.id === productId);
+            if (p) p.vtuberId = value;
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function addNewProduct() {
+            let products = getProducts();
+            const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            const newProd = {
+                id: newId,
+                vtuberId: "gura",
+                title: "Новый товар",
+                desc: "Описание нового лимитированного мерча",
+                price: 1500,
+                photo: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80"
+            };
+            products.push(newProd);
+            localStorage.setItem('products', JSON.stringify(products));
+            renderAdminProducts();
+        }
+
+        window.addEventListener('DOMContentLoaded', checkAdminAccess);
+    </script>
+</body>
+</html>
