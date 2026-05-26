@@ -62,6 +62,7 @@ const DEFAULT_SHIPPING = [
 const DEFAULT_CHATS = [
     { roomId: "chat_user", clientName: "user", messages: [{ senderId: "manager", text: "Здравствуйте! Чем я могу помочь вам по поводу мерча?", timestamp: "26.05.2026, 12:00" }] }
 ];
+
 function initDatabase() {
     if (!localStorage.getItem('vtubers')) localStorage.setItem('vtubers', JSON.stringify(DEFAULT_VTUBERS));
     if (!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify(DEFAULT_PRODUCTS));
@@ -86,6 +87,7 @@ function initDatabase() {
         ]));
     }
 }
+
 function getVtubers() { return JSON.parse(localStorage.getItem('vtubers')); }
 function getProducts() { return JSON.parse(localStorage.getItem('products')); }
 function getArts() { return JSON.parse(localStorage.getItem('arts')); }
@@ -96,14 +98,24 @@ function getCart() { return JSON.parse(localStorage.getItem('cart')); }
 function getUsers() { return JSON.parse(localStorage.getItem('users')); }
 function getShippingSettings() { return JSON.parse(localStorage.getItem('shipping_settings')); }
 function getSupportChats() { return JSON.parse(localStorage.getItem('support_chats')); }
-function getCurrentUser() { return JSON.parse(sessionStorage.getItem('currentUser')); }
+
+function getCurrentUser() { 
+    const sessionUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!sessionUser) return null;
+    const users = getUsers();
+    const freshUser = users.find(u => u.username === sessionUser.username);
+    return freshUser || sessionUser;
+}
+
 function login(username, password) {
     const users = getUsers();
     const user = users.find(u => u.username === username && u.password === password);
-    if (user) { sessionStorage.setItem('currentUser', JSON.stringify(user)); return user; }
+    if (user) { localStorage.setItem('currentUser', JSON.stringify(user)); return user; }
     return null;
 }
-function logout() { sessionStorage.removeItem('currentUser'); window.location.href = "account.html"; }
+
+function logout() { localStorage.removeItem('currentUser'); window.location.href = "account.html"; }
+
 function addToCart(productId, size) {
     const productsList = getProducts();
     const product = productsList.find(p => p.id === productId);
@@ -114,16 +126,19 @@ function addToCart(productId, size) {
     updateCartCount();
     alert(`Товар "${product.title}" (${size}) добавлен в корзину!`);
 }
+
 function updateCartCount() {
     const cart = getCart();
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const badge = document.getElementById('cart-count');
     if (badge) badge.textContent = count;
 }
+
 function toggleCart() {
     const modal = document.getElementById('cart-modal');
     if (modal) { modal.classList.toggle('active'); if (modal.classList.contains('active')) { renderCartItems(); } }
 }
+
 function renderCartItems() {
     const container = document.getElementById('cart-items-container');
     const cart = getCart();
@@ -151,6 +166,7 @@ function renderCartItems() {
     const total = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
     document.getElementById('cart-total-price').textContent = `${total} ₽`;
 }
+
 function changeQty(index, change) {
     let cart = getCart();
     cart[index].qty += change;
@@ -159,6 +175,7 @@ function changeQty(index, change) {
     updateCartCount();
     renderCartItems();
 }
+
 function showCheckout() {
     const cart = getCart();
     if (cart.length === 0) { alert('Ваша корзина пуста!'); return; }
@@ -170,6 +187,7 @@ function showCheckout() {
     shipSelect.innerHTML = shipMethods.map(s => `<option value="${s.id}" data-price="${s.price}">${s.name} (+${s.price} ₽)</option>`).join('');
     updateCheckoutTotal();
 }
+
 function updateCheckoutTotal() {
     const cart = getCart();
     const shipSelect = document.getElementById('checkout-shipping');
@@ -178,6 +196,7 @@ function updateCheckoutTotal() {
     const finalTotal = itemsTotal + shipPrice;
     document.getElementById('checkout-total-price').textContent = `${finalTotal} ₽`;
 }
+
 function completeCheckout() {
     const address = document.getElementById('checkout-address').value.trim();
     const delivery = document.getElementById('checkout-shipping').value;
@@ -202,6 +221,7 @@ function completeCheckout() {
     alert(`Спасибо за покупку! Заказ #${newId} сформирован на сумму ${finalPrice} ₽.`);
     window.location.href = "account.html?tab=orders";
 }
+
 function appendCartModalHTML() {
     if (document.getElementById('cart-modal')) return;
     const div = document.createElement('div');
@@ -251,6 +271,7 @@ function appendCartModalHTML() {
     `;
     document.body.appendChild(div);
 }
+
 function renderHeaderNav() {
     const nav = document.querySelector('nav');
     if (!nav) return;
@@ -273,6 +294,7 @@ function renderHeaderNav() {
     nav.innerHTML = html;
     updateCartCount();
 }
+
 initDatabase();
 window.addEventListener('DOMContentLoaded', () => {
     appendCartModalHTML();
