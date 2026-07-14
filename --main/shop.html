@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Официальный Мерч-Магазин - VTuber Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-3px);
+            border-color: #444;
+        }
+        .product-img {
+            height: 200px;
+            background-color: #1A1A1A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            overflow: hidden;
+        }
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .product-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .product-desc {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .product-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .product-price {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .size-select {
+            background-color: #222;
+            border: 1px solid var(--border-color);
+            color: white;
+            font-size: 12px;
+            padding: 5px 3px;
+            border-radius: 4px;
+            outline: none;
+            margin-bottom: 10px;
+            width: 100%;
+            pointer-events: auto;
+        }
+        .buy-btn {
+            background-color: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            font-weight: 600;
+            pointer-events: auto;
+        }
+        .buy-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        /* Запрещаем всплытие на карточке, кроме кнопки и селекта */
+        .product-card * {
+            pointer-events: none;
+        }
+        .product-card .buy-btn,
+        .product-card .size-select {
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
+        </div>
+    </header>
+    <main>
+        <div class="two-column-layout">
+            <div class="sidebar">
+                <input type="text" class="search-bar" placeholder="Поиск мерча..." id="shop-search" oninput="filterShop()">
+                <div class="list-title">Фильтр по стримеру</div>
+                <ul class="sidebar-list" id="shop-streamers-list"></ul>
+            </div>
+            <div class="shop-grid" id="shop-products-grid"></div>
+        </div>
+    </main>
+
+    <!-- Модальное окно заказа -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Подтверждение заказа</div>
+                <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="orderModalText">Вы выбрали товар: <span class="highlight"></span></p>
+                <p id="orderModalSize">Размер: <span class="highlight"></span></p>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">Нажмите «Перейти в Telegram», чтобы скопировать заказ и открыть чат.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeOrderModal()">Отмена</button>
+                <button class="btn-primary" id="orderModalConfirm">Перейти в Telegram</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
+        <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
+    </footer>
+    <script src="app.js"></script>
+    <script>
+        let selectedFilter = "all";
+
+        function renderShopFilters() {
+            const vtubers = getVtubers();
+            const container = document.getElementById('shop-streamers-list');
+            container.innerHTML = `
+                <li class="sidebar-item ${selectedFilter === 'all' ? 'active' : ''}" onclick="applyFilter('all')">Все товары</li>
+            ` + vtubers.map(v => `
+                <li class="sidebar-item ${selectedFilter === v.id ? 'active' : ''}" onclick="applyFilter('${v.id}')">Мерч ${v.name}</li>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const products = getProducts();
+            const grid = document.getElementById('shop-products-grid');
+            const searchVal = document.getElementById('shop-search').value.toLowerCase();
+            const filtered = products.filter(p => {
+                const matchesStreamer = selectedFilter === 'all' || p.vtuberId === selectedFilter;
+                const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
+                return matchesStreamer && matchesSearch;
+            });
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Товары не найдены</p>';
+                return;
+            }
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card" data-id="${p.id}" onclick="goToProduct(${p.id})">
+                    <div class="product-img"><img src="${p.photo}" alt="${p.title}"></div>
+                    <div class="product-info">
+                        <div class="product-title">${p.title}</div>
+                        <div class="product-desc">${p.desc}</div>
+                        <select class="size-select" id="size-select-${p.id}" onclick="event.stopPropagation();">
+                            <option value="S">Размер: S</option>
+                            <option value="M">Размер: M</option>
+                            <option value="L">Размер: L</option>
+                            <option value="XL">Размер: XL</option>
+                        </select>
+                        <div class="product-price-row">
+                            <span class="product-price">${p.price} ₽</span>
+                            <button class="buy-btn" onclick="buyProduct(${p.id}, event)">Купить</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function applyFilter(id) { selectedFilter = id; renderShopFilters(); renderProducts(); }
+        function filterShop() { renderProducts(); }
+
+        function goToProduct(id) {
+            window.location.href = `product.html?id=${id}`;
+        }
+
+        // ----- Модальное окно заказа -----
+        function openOrderModal(product, size) {
+            const modal = document.getElementById('orderModal');
+            document.getElementById('orderModalText').innerHTML = 
+                `Вы выбрали товар: <span class="highlight">${product.title}</span>`;
+            document.getElementById('orderModalSize').innerHTML = 
+                `Размер: <span class="highlight">${size}</span>`;
+            modal.dataset.productId = product.id;
+            modal.dataset.size = size;
+            modal.classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        document.getElementById('orderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+
+        document.getElementById('orderModalConfirm').addEventListener('click', function() {
+            const modal = document.getElementById('orderModal');
+            const productId = parseInt(modal.dataset.productId);
+            const size = modal.dataset.size;
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) return;
+            const message = `Хочу заказать товар: ${product.title}, размер: ${size}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(message).then(() => {
+                    window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                    closeOrderModal();
+                }).catch(() => {
+                    alert('Скопируйте текст: ' + message);
+                    window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                    closeOrderModal();
+                });
+            } else {
+                alert('Скопируйте текст: ' + message);
+                window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                closeOrderModal();
+            }
+        });
+
+        function buyProduct(productId, event) {
+            if (event) event.stopPropagation();
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) return;
+            const sizeSelect = document.getElementById(`size-select-${productId}`);
+            const size = sizeSelect ? sizeSelect.value : 'M';
+            openOrderModal(product, size);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const streamerParam = urlParams.get('streamer');
+            if (streamerParam) selectedFilter = streamerParam;
+            renderShopFilters();
+            renderProducts();
+        });
+    </script>
+</body>
+</html>

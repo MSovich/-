@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База Знаний (Wiki) втуберов - VTuber Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .vtuber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .vtuber-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .vtuber-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-color);
+            box-shadow: 0 12px 40px rgba(230, 57, 70, 0.25);
+        }
+        .vtuber-card-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .vtuber-card:hover .vtuber-card-img {
+            transform: scale(1.08);
+        }
+        .vtuber-card-content {
+            padding: 20px;
+        }
+        .vtuber-card-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .vtuber-card-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .wiki-search {
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
+        </div>
+    </header>
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
+            <h2 class="section-title" style="margin-bottom: 0;">Все втуберы</h2>
+            <input type="text" class="search-bar wiki-search" placeholder="Поиск втубера..." id="wiki-search" oninput="filterVtubers()">
+        </div>
+
+        <div class="vtuber-grid" id="wiki-vtubers-grid"></div>
+    </main>
+    <footer>
+        <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
+        <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
+    </footer>
+    <script src="app.js"></script>
+    <script>
+        function renderVtuberList() {
+            const vtubers = getVtubers();
+            const query = document.getElementById('wiki-search').value.toLowerCase();
+            const filtered = vtubers.filter(v => v.name.toLowerCase().includes(query) || v.desc.toLowerCase().includes(query));
+            const grid = document.getElementById('wiki-vtubers-grid');
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 0;">Втуберы не найдены</p>';
+                return;
+            }
+            grid.innerHTML = filtered.map(v => `
+                <div class="vtuber-card" onclick="window.location.href='vtuber.html?id=${v.id}'">
+                    <img class="vtuber-card-img" src="${v.photo}" alt="${v.name}">
+                    <div class="vtuber-card-content">
+                        <div class="vtuber-card-name">${v.name}</div>
+                        <div class="vtuber-card-desc">${v.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterVtubers() {
+            renderVtuberList();
+        }
+
+        window.addEventListener('DOMContentLoaded', renderVtuberList);
+    </script>
+</body>
+</html>

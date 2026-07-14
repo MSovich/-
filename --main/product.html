@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Товар - VTuber Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        .back-link:hover {
+            color: var(--accent-color);
+        }
+        .back-link::before {
+            content: '← ';
+        }
+
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        .product-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .product-gallery-main {
+            width: 100%;
+            height: 400px;
+            background: #1A1A1A;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .product-gallery-thumbs img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .product-gallery-thumbs img:hover,
+        .product-gallery-thumbs img.active {
+            border-color: var(--accent-color);
+        }
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .product-title-big {
+            font-size: 32px;
+            font-weight: 800;
+        }
+        .product-price-big {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        .product-desc-big {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        .product-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .product-actions select {
+            background: #222;
+            border: 1px solid var(--border-color);
+            color: white;
+            font-size: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            outline: none;
+            width: 100%;
+            max-width: 250px;
+        }
+        .product-actions select:focus {
+            border-color: var(--accent-color);
+        }
+        .product-actions .buy-btn-large {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+        .product-actions .buy-btn-large:hover {
+            background: var(--accent-hover);
+        }
+
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .product-gallery-main {
+                height: 300px;
+            }
+            .product-gallery-thumbs {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .product-gallery-thumbs img {
+                height: 60px;
+            }
+            .product-title-big {
+                font-size: 26px;
+            }
+            .product-price-big {
+                font-size: 24px;
+            }
+            .product-actions select,
+            .product-actions .buy-btn-large {
+                max-width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .product-gallery-main {
+                height: 220px;
+            }
+            .product-gallery-thumbs img {
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <nav></nav>
+        </div>
+    </header>
+    <main>
+        <!-- Кнопка "Назад" -->
+        <a class="back-link" onclick="history.back()">Назад</a>
+
+        <div id="product-content">
+            <p style="text-align:center; color: var(--text-muted); padding: 40px 0;">Загрузка товара...</p>
+        </div>
+    </main>
+
+    <!-- Модальное окно заказа -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Подтверждение заказа</div>
+                <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="orderModalText">Вы выбрали товар: <span class="highlight"></span></p>
+                <p id="orderModalSize">Размер: <span class="highlight"></span></p>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">Нажмите «Перейти в Telegram», чтобы скопировать заказ и открыть чат.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeOrderModal()">Отмена</button>
+                <button class="btn-primary" id="orderModalConfirm">Перейти в Telegram</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
+        <p style="margin-top: 10px; font-size: 12px; color: #555;">© 2026 VTuber Hub. Все права защищены.</p>
+    </footer>
+    <script src="app.js"></script>
+    <script>
+        // Получаем ID товара из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'));
+
+        let currentProduct = null;
+
+        function renderProduct() {
+            const products = getProducts();
+            const product = products.find(p => p.id === productId);
+            const container = document.getElementById('product-content');
+
+            if (!product) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 60px 0;">
+                        <h2 style="color: var(--text-muted);">Товар не найден</h2>
+                        <a href="shop.html" class="btn-primary" style="margin-top:20px;">Вернуться в магазин</a>
+                    </div>
+                `;
+                return;
+            }
+
+            currentProduct = product;
+
+            // Галерея
+            const gallery = product.gallery || [product.photo];
+            const mainImg = gallery[0];
+
+            let thumbsHtml = gallery.map((url, index) => `
+                <img src="${url}" alt="${product.title}" 
+                     class="${index === 0 ? 'active' : ''}"
+                     onclick="changeMainImage(this, '${url}')">
+            `).join('');
+
+            container.innerHTML = `
+                <div class="product-detail">
+                    <div class="product-gallery">
+                        <div class="product-gallery-main">
+                            <img src="${mainImg}" alt="${product.title}" id="product-main-img">
+                        </div>
+                        <div class="product-gallery-thumbs">
+                            ${thumbsHtml}
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h1 class="product-title-big">${product.title}</h1>
+                        <div class="product-price-big">${product.price} ₽</div>
+                        <div class="product-desc-big">${product.desc}</div>
+                        <div class="product-actions">
+                            <select id="product-size-select">
+                                <option value="S">Размер: S</option>
+                                <option value="M">Размер: M</option>
+                                <option value="L">Размер: L</option>
+                                <option value="XL">Размер: XL</option>
+                            </select>
+                            <button class="buy-btn-large" onclick="buyProduct()">Купить</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Переключение основного изображения
+        function changeMainImage(thumbElement, newSrc) {
+            const mainImg = document.getElementById('product-main-img');
+            if (mainImg) mainImg.src = newSrc;
+
+            // Убираем active у всех миниатюр
+            document.querySelectorAll('.product-gallery-thumbs img').forEach(img => img.classList.remove('active'));
+            thumbElement.classList.add('active');
+        }
+
+        // ----- Функции для модалки -----
+        function openOrderModal(product, size) {
+            const modal = document.getElementById('orderModal');
+            document.getElementById('orderModalText').innerHTML = 
+                `Вы выбрали товар: <span class="highlight">${product.title}</span>`;
+            document.getElementById('orderModalSize').innerHTML = 
+                `Размер: <span class="highlight">${size}</span>`;
+            modal.dataset.productId = product.id;
+            modal.dataset.size = size;
+            modal.classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        document.getElementById('orderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+
+        document.getElementById('orderModalConfirm').addEventListener('click', function() {
+            const modal = document.getElementById('orderModal');
+            const productId = parseInt(modal.dataset.productId);
+            const size = modal.dataset.size;
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) return;
+            const message = `Хочу заказать товар: ${product.title}, размер: ${size}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(message).then(() => {
+                    window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                    closeOrderModal();
+                }).catch(() => {
+                    alert('Скопируйте текст: ' + message);
+                    window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                    closeOrderModal();
+                });
+            } else {
+                alert('Скопируйте текст: ' + message);
+                window.open('https://web.telegram.org/a/#8320234702', '_blank');
+                closeOrderModal();
+            }
+        });
+
+        function buyProduct() {
+            if (!currentProduct) return;
+            const sizeSelect = document.getElementById('product-size-select');
+            const size = sizeSelect ? sizeSelect.value : 'M';
+            openOrderModal(currentProduct, size);
+        }
+
+        // Загрузка
+        window.addEventListener('DOMContentLoaded', renderProduct);
+    </script>
+</body>
+</html>
