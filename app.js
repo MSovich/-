@@ -115,7 +115,6 @@ function initDatabase() {
     if (!localStorage.getItem('arts')) localStorage.setItem('arts', JSON.stringify(DEFAULT_ARTS));
     if (!localStorage.getItem('news')) localStorage.setItem('news', JSON.stringify(DEFAULT_NEWS));
     if (!localStorage.getItem('reviews')) localStorage.setItem('reviews', JSON.stringify(DEFAULT_REVIEWS));
-    // Миграция для добавления gallery, если его нет
     migrateProducts();
 }
 
@@ -151,5 +150,39 @@ function renderHeaderNav() {
     `;
 }
 
+function initMobileNav() {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+    if (!toggle || !nav) return;
+
+    toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        nav.classList.toggle('open');
+        toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
+    });
+
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+            const container = document.querySelector('.nav-container');
+            if (container && !container.contains(e.target)) {
+                nav.classList.remove('open');
+                toggle.textContent = '☰';
+            }
+        }
+    });
+
+    nav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                nav.classList.remove('open');
+                toggle.textContent = '☰';
+            }
+        });
+    });
+}
+
 initDatabase();
-window.addEventListener('DOMContentLoaded', renderHeaderNav);
+window.addEventListener('DOMContentLoaded', () => {
+    renderHeaderNav();
+    initMobileNav();
+});
