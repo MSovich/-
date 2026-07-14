@@ -6,6 +6,7 @@
     <title>Официальный Мерч-Магазин - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Основные стили магазина */
         .shop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -94,12 +95,139 @@
         .buy-btn:hover {
             background-color: var(--accent-hover);
         }
+        /* Запрещаем всплытие на карточке, кроме кнопки и селекта */
         .product-card * {
             pointer-events: none;
         }
         .product-card .buy-btn,
         .product-card .size-select {
             pointer-events: auto;
+        }
+
+        /* ===== АДАПТИВНОСТЬ ДЛЯ МАГАЗИНА ===== */
+
+        /* Планшеты и маленькие ноутбуки */
+        @media (max-width: 1024px) {
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        /* Телефоны (до 768px) */
+        @media (max-width: 768px) {
+            .sidebar {
+                padding: 15px 10px;
+            }
+            .sidebar .search-bar {
+                font-size: 16px; /* предотвравщает зумирование на iOS */
+                padding: 12px 14px;
+                margin-bottom: 15px;
+            }
+            .sidebar-item {
+                font-size: 14px;
+                padding: 12px 16px;
+                border-radius: 6px;
+            }
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+            }
+            .product-card {
+                border-radius: 8px;
+            }
+            .product-img {
+                height: 160px;
+            }
+            .product-info {
+                padding: 12px;
+            }
+            .product-title {
+                font-size: 14px;
+            }
+            .product-desc {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            .size-select {
+                font-size: 14px;
+                padding: 8px 6px;
+                margin-bottom: 8px;
+            }
+            .buy-btn {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+            .product-price {
+                font-size: 16px;
+            }
+            /* Увеличиваем область касания для кнопок */
+            .buy-btn,
+            .sidebar-item {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Очень маленькие телефоны (до 480px) */
+        @media (max-width: 480px) {
+            .sidebar {
+                padding: 10px 8px;
+            }
+            .sidebar-item {
+                font-size: 13px;
+                padding: 10px 12px;
+                min-height: 40px;
+            }
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            .product-img {
+                height: 130px;
+            }
+            .product-info {
+                padding: 10px;
+            }
+            .product-title {
+                font-size: 13px;
+            }
+            .product-desc {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+            .size-select {
+                font-size: 13px;
+                padding: 6px 4px;
+            }
+            .buy-btn {
+                font-size: 13px;
+                padding: 8px 10px;
+                min-height: 36px;
+            }
+            .product-price {
+                font-size: 14px;
+            }
+            .product-price-row {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .product-price-row .buy-btn {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* Планшеты типа iPad Pro в портретной ориентации (уже обработаны в style.css) */
+        /* Дополнительно для Landscape на планшетах */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .product-img {
+                height: 180px;
+            }
         }
     </style>
 </head>
@@ -122,6 +250,7 @@
         </div>
     </main>
 
+    <!-- Модальное окно заказа -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal">
             <div class="modal-header">
@@ -199,6 +328,7 @@
             window.location.href = `product.html?id=${id}`;
         }
 
+        // ----- Модальное окно заказа -----
         function openOrderModal(product, size) {
             const modal = document.getElementById('orderModal');
             document.getElementById('orderModalText').innerHTML = 
