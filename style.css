@@ -32,7 +32,7 @@ body {
 
 ::selection { background: var(--accent-color); color: white; }
 
-/* Animations (без изменений) */
+/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -93,6 +93,7 @@ header.scrolled {
     justify-content: space-between; 
     align-items: center; 
     padding: 15px 20px; 
+    position: relative;
 }
 .logo { 
     font-size: clamp(1.1rem, 2.5vw, 1.5rem); 
@@ -113,7 +114,28 @@ header.scrolled {
     border-radius: 50%;
     animation: pulse 2s ease-in-out infinite;
 }
-nav { display: flex; gap: 25px; align-items: center; }
+
+/* Кнопка гамбургера */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0 10px;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+.nav-toggle:hover {
+    color: var(--accent-color);
+}
+
+nav { 
+    display: flex; 
+    gap: 25px; 
+    align-items: center; 
+}
 nav a { 
     color: var(--text-muted); 
     text-decoration: none; 
@@ -860,6 +882,7 @@ footer a:hover { color: var(--accent-hover); }
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
+        padding: 20px;
     }
     .sidebar .search-bar { grid-column: 1 / -1; }
     .sidebar-list {
@@ -915,17 +938,40 @@ footer a:hover { color: var(--accent-hover); }
 /* Мобильные устройства (до 768px) */
 @media (max-width: 768px) {
     .nav-container {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        padding: 15px 10px;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+    .nav-toggle {
+        display: block;
+        order: 2;
     }
     nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 15px 0 5px;
+        order: 3;
+        border-top: 1px solid var(--border-color);
+        margin-top: 10px;
     }
-    nav a { font-size: 0.85rem; }
+    nav.open {
+        display: flex;
+    }
+    nav a {
+        padding: 12px 0;
+        text-align: center;
+        font-size: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    nav a:last-child {
+        border-bottom: none;
+    }
+    .logo {
+        order: 1;
+        flex: 1;
+    }
     .two-column-layout { grid-template-columns: 1fr; }
     .sidebar {
         position: static;
@@ -938,6 +984,7 @@ footer a:hover { color: var(--accent-hover); }
         gap: 10px;
         padding-bottom: 5px;
         -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
     }
     .sidebar-item {
         white-space: nowrap;
@@ -960,16 +1007,6 @@ footer a:hover { color: var(--accent-hover); }
         width: 100%; 
         right: -100%; 
     }
-    /* Прячем навигацию за кнопку-бургер (если есть JS) – можно добавить класс .nav-open */
-    .nav-container .nav-toggle {
-        display: block;
-        background: none;
-        border: none;
-        color: var(--text-main);
-        font-size: 1.8rem;
-        cursor: pointer;
-    }
-    /* Если нет бургера – просто показываем ссылки в строку */
 }
 
 /* Очень маленькие телефоны (до 480px) */
@@ -989,6 +1026,9 @@ footer a:hover { color: var(--accent-hover); }
     }
     .vtuber-card-img { height: 200px; }
     .review-card::before { font-size: 40px; top: 5px; right: 10px; }
+    .vtuber-detail .vtuber-photo { height: 220px; }
+    .product-detail .product-gallery-main { height: 220px; }
+    .product-detail .product-gallery-thumbs img { height: 50px; }
 }
 
 /* Для экранов с высокой плотностью пикселей (Retina) */
