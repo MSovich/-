@@ -24,7 +24,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-color); }
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
@@ -32,7 +31,6 @@ body {
 
 ::selection { background: var(--accent-color); color: white; }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -48,10 +46,6 @@ body {
 @keyframes scaleIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
-}
-@keyframes shimmer {
-    0% { background-position: -1000px 0; }
-    100% { background-position: 1000px 0; }
 }
 @keyframes pulse {
     0%, 100% { opacity: 1; }
@@ -115,7 +109,6 @@ header.scrolled {
     animation: pulse 2s ease-in-out infinite;
 }
 
-/* Кнопка гамбургера */
 .nav-toggle {
     display: none;
     background: none;
@@ -159,7 +152,6 @@ nav a::after {
 nav a:hover, nav a.active { color: var(--text-main); }
 nav a:hover::after, nav a.active::after { width: 100%; }
 
-/* Main */
 main { 
     max-width: var(--max-width); 
     margin: 0 auto; 
@@ -167,7 +159,6 @@ main {
     min-height: calc(100vh - 150px); 
 }
 
-/* Hero */
 .hero {
     position: relative;
     padding: 80px 20px;
@@ -219,7 +210,6 @@ main {
     animation: slideUp 0.8s ease-out 0.4s backwards;
 }
 
-/* Section Title */
 .section-title { 
     font-size: clamp(1.5rem, 3vw, 2.2rem);
     font-weight: 700; 
@@ -245,7 +235,6 @@ main {
     animation: slideUp 0.6s ease-out 0.2s backwards;
 }
 
-/* Buttons */
 .hero-btn, .btn-primary { 
     background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
     color: white; 
@@ -308,7 +297,6 @@ main {
     box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
 }
 
-/* Cards (общие) */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -335,7 +323,6 @@ main {
 }
 .card:hover::before { opacity: 1; }
 
-/* Сетки - единый подход с auto-fit и минимальной шириной */
 .vtuber-grid,
 .shop-grid,
 .news-grid,
@@ -346,7 +333,6 @@ main {
     margin-bottom: 60px;
 }
 
-/* Vtuber Cards */
 .vtuber-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -386,7 +372,6 @@ main {
     line-height: 1.5;
 }
 
-/* Shop */
 .shop-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
 .product-card {
     background-color: var(--card-bg);
@@ -430,7 +415,6 @@ main {
     margin-bottom: 15px;
 }
 
-/* News */
 .news-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .news-card {
     background-color: var(--card-bg);
@@ -475,7 +459,6 @@ main {
     opacity: 0.7;
 }
 
-/* Reviews */
 .reviews-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 .review-card {
     background-color: var(--card-bg);
@@ -513,7 +496,6 @@ main {
     font-weight: 600;
 }
 
-/* Sidebar + Two-column layout */
 .two-column-layout { 
     display: grid; 
     grid-template-columns: 280px 1fr; 
@@ -600,7 +582,6 @@ main {
 }
 .sidebar-item.active::before { transform: scaleY(1); }
 
-/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -685,7 +666,6 @@ main {
     justify-content: flex-end;
 }
 
-/* Toast */
 .toast-container {
     position: fixed;
     top: 100px;
@@ -712,7 +692,6 @@ main {
 .toast.success { border-left-color: #10B981; }
 .toast.error { border-left-color: var(--accent-color); }
 
-/* Cart */
 .cart-badge {
     position: absolute;
     top: -8px;
@@ -811,7 +790,6 @@ main {
     color: var(--text-main);
 }
 
-/* Form */
 .form-group { margin-bottom: 20px; }
 .form-group label { 
     display: block; 
@@ -836,7 +814,6 @@ main {
     box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
 }
 
-/* Footer */
 footer { 
     text-align: center; 
     color: var(--text-muted); 
@@ -853,9 +830,6 @@ footer a {
 }
 footer a:hover { color: var(--accent-hover); }
 
-/* ========== АДАПТИВНОСТЬ ========== */
-
-/* Планшеты и маленькие ноутбуки (до 1024px) */
 @media (max-width: 1024px) {
     .two-column-layout { 
         grid-template-columns: 220px 1fr; 
@@ -871,7 +845,6 @@ footer a:hover { color: var(--accent-hover); }
     .hero { padding: 60px 20px; }
 }
 
-/* iPad Pro и большие планшеты в портретной ориентации (1024x1366) */
 @media (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait) {
     .two-column-layout { 
         grid-template-columns: 1fr; 
@@ -902,7 +875,6 @@ footer a:hover { color: var(--accent-hover); }
     }
 }
 
-/* iPad Pro ландшафт (1366x1024) и большие планшеты */
 @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
     .two-column-layout { 
         grid-template-columns: 240px 1fr; 
@@ -916,7 +888,6 @@ footer a:hover { color: var(--accent-hover); }
     }
 }
 
-/* Очень большие экраны (>1400px) */
 @media (min-width: 1400px) {
     :root {
         --max-width: 1600px;
@@ -935,7 +906,6 @@ footer a:hover { color: var(--accent-hover); }
     .hero h1 { font-size: 4.5rem; }
 }
 
-/* Мобильные устройства (до 768px) */
 @media (max-width: 768px) {
     .nav-container {
         flex-wrap: wrap;
@@ -1009,7 +979,6 @@ footer a:hover { color: var(--accent-hover); }
     }
 }
 
-/* Очень маленькие телефоны (до 480px) */
 @media (max-width: 480px) {
     .hero h1 { font-size: 2rem !important; }
     .hero p { font-size: 0.9rem !important; }
@@ -1031,7 +1000,6 @@ footer a:hover { color: var(--accent-hover); }
     .product-detail .product-gallery-thumbs img { height: 50px; }
 }
 
-/* Для экранов с высокой плотностью пикселей (Retina) */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     .hero::before {
         background-image: url('https://image.qwenlm.ai/public_source/9949d2c9-0b74-492d-8eed-932ee424c334/143755540-92a9-4c30-a2a1-efd387a12d0f.png');
