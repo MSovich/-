@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Официальный Мерч-Магазин - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Основные стили магазина */
+        /* ---- ОСНОВНЫЕ СТИЛИ МАГАЗИНА ---- */
         .shop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -62,6 +62,7 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
+            gap: 10px;
         }
         .product-price {
             font-weight: 700;
@@ -91,11 +92,11 @@
             width: 100%;
             font-weight: 600;
             pointer-events: auto;
+            text-align: center;
         }
         .buy-btn:hover {
             background-color: var(--accent-hover);
         }
-        /* Запрещаем всплытие на карточке, кроме кнопки и селекта */
         .product-card * {
             pointer-events: none;
         }
@@ -104,9 +105,7 @@
             pointer-events: auto;
         }
 
-        /* ===== АДАПТИВНОСТЬ ДЛЯ МАГАЗИНА ===== */
-
-        /* Планшеты и маленькие ноутбуки */
+        /* ---- АДАПТАЦИЯ ДЛЯ ПЛАНШЕТОВ (до 1024px) ---- */
         @media (max-width: 1024px) {
             .shop-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -114,119 +113,142 @@
             }
         }
 
-        /* Телефоны (до 768px) */
+        /* ---- МОБИЛЬНЫЕ ТЕЛЕФОНЫ (до 768px) ---- */
         @media (max-width: 768px) {
+            /* Переключаем сетку в один столбец */
+            .shop-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px;
+            }
+
+            /* Боковая панель – делаем компактной */
             .sidebar {
-                padding: 15px 10px;
+                padding: 12px 10px;
             }
             .sidebar .search-bar {
-                font-size: 16px; /* предотвравщает зумирование на iOS */
+                font-size: 16px; /* предотвращает зумирование на iOS */
                 padding: 12px 14px;
-                margin-bottom: 15px;
+                margin-bottom: 12px;
             }
             .sidebar-item {
                 font-size: 14px;
                 padding: 12px 16px;
                 border-radius: 6px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
             }
-            .shop-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 15px;
-            }
+
+            /* Карточка товара – на всю ширину, увеличенные элементы */
             .product-card {
-                border-radius: 8px;
+                border-radius: 10px;
+                flex-direction: row;
+                align-items: stretch;
+                min-height: 120px;
             }
             .product-img {
-                height: 160px;
+                width: 140px;
+                min-height: 140px;
+                height: auto;
+                flex-shrink: 0;
+                background: #1A1A1A;
+            }
+            .product-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
             .product-info {
-                padding: 12px;
+                padding: 12px 14px;
+                justify-content: space-between;
+                flex: 1;
             }
             .product-title {
-                font-size: 14px;
+                font-size: 16px;
+                margin-bottom: 4px;
             }
             .product-desc {
-                font-size: 12px;
-                margin-bottom: 10px;
+                font-size: 13px;
+                margin-bottom: 8px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
             }
             .size-select {
                 font-size: 14px;
                 padding: 8px 6px;
-                margin-bottom: 8px;
+                margin-bottom: 6px;
             }
             .buy-btn {
-                font-size: 14px;
+                font-size: 15px;
                 padding: 10px 12px;
-            }
-            .product-price {
-                font-size: 16px;
-            }
-            /* Увеличиваем область касания для кнопок */
-            .buy-btn,
-            .sidebar-item {
                 min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        /* Очень маленькие телефоны (до 480px) */
-        @media (max-width: 480px) {
-            .sidebar {
-                padding: 10px 8px;
-            }
-            .sidebar-item {
-                font-size: 13px;
-                padding: 10px 12px;
-                min-height: 40px;
-            }
-            .shop-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 12px;
-            }
-            .product-img {
-                height: 130px;
-            }
-            .product-info {
-                padding: 10px;
-            }
-            .product-title {
-                font-size: 13px;
-            }
-            .product-desc {
-                font-size: 11px;
-                margin-bottom: 8px;
-            }
-            .size-select {
-                font-size: 13px;
-                padding: 6px 4px;
-            }
-            .buy-btn {
-                font-size: 13px;
-                padding: 8px 10px;
-                min-height: 36px;
             }
             .product-price {
-                font-size: 14px;
+                font-size: 18px;
             }
             .product-price-row {
                 flex-wrap: wrap;
-                gap: 6px;
             }
             .product-price-row .buy-btn {
                 flex: 1 1 100%;
             }
         }
 
-        /* Планшеты типа iPad Pro в портретной ориентации (уже обработаны в style.css) */
-        /* Дополнительно для Landscape на планшетах */
+        /* ---- ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 480px) ---- */
+        @media (max-width: 480px) {
+            .sidebar-item {
+                font-size: 13px;
+                padding: 10px 12px;
+                min-height: 40px;
+            }
+            .product-card {
+                border-radius: 8px;
+                min-height: 100px;
+            }
+            .product-img {
+                width: 110px;
+                min-height: 110px;
+            }
+            .product-info {
+                padding: 10px 12px;
+            }
+            .product-title {
+                font-size: 14px;
+            }
+            .product-desc {
+                font-size: 12px;
+                -webkit-line-clamp: 2;
+            }
+            .size-select {
+                font-size: 13px;
+                padding: 6px 4px;
+            }
+            .buy-btn {
+                font-size: 14px;
+                padding: 8px 10px;
+                min-height: 38px;
+            }
+            .product-price {
+                font-size: 16px;
+            }
+        }
+
+        /* ---- ПЛАНШЕТЫ В ЛАНДШАФТЕ (768–1024px) ---- */
         @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
             .shop-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
             .product-img {
                 height: 180px;
+            }
+        }
+
+        /* ---- iPad Pro в портретной ориентации (уже обработано в style.css, но дополним) ---- */
+        @media (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait) {
+            .shop-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
     </style>
