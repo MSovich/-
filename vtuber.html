@@ -144,11 +144,11 @@
     <header>
         <div class="nav-container">
             <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <button class="nav-toggle" aria-label="Меню">☰</button>
             <nav></nav>
         </div>
     </header>
     <main>
-        <!-- Кнопка "Назад" -->
         <a class="back-link" onclick="history.back()">Назад</a>
 
         <div id="vtuber-content">
@@ -179,7 +179,6 @@
                 return;
             }
 
-            // Получаем арты
             const arts = getArts().filter(a => a.streamerId === vtuber.id);
 
             let artsHtml = '';
