@@ -161,11 +161,11 @@
     <header>
         <div class="nav-container">
             <a href="index.html" class="logo"><div class="logo-dot"></div>VTUBER HUB</a>
+            <button class="nav-toggle" aria-label="Меню">☰</button>
             <nav></nav>
         </div>
     </header>
     <main>
-        <!-- Кнопка "Назад" -->
         <a class="back-link" onclick="history.back()">Назад</a>
 
         <div id="product-content">
@@ -173,7 +173,6 @@
         </div>
     </main>
 
-    <!-- Модальное окно заказа -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal">
             <div class="modal-header">
@@ -198,7 +197,6 @@
     </footer>
     <script src="app.js"></script>
     <script>
-        // Получаем ID товара из URL
         const urlParams = new URLSearchParams(window.location.search);
         const productId = parseInt(urlParams.get('id'));
 
@@ -221,7 +219,6 @@
 
             currentProduct = product;
 
-            // Галерея
             const gallery = product.gallery || [product.photo];
             const mainImg = gallery[0];
 
@@ -259,17 +256,13 @@
             `;
         }
 
-        // Переключение основного изображения
         function changeMainImage(thumbElement, newSrc) {
             const mainImg = document.getElementById('product-main-img');
             if (mainImg) mainImg.src = newSrc;
-
-            // Убираем active у всех миниатюр
             document.querySelectorAll('.product-gallery-thumbs img').forEach(img => img.classList.remove('active'));
             thumbElement.classList.add('active');
         }
 
-        // ----- Функции для модалки -----
         function openOrderModal(product, size) {
             const modal = document.getElementById('orderModal');
             document.getElementById('orderModalText').innerHTML = 
@@ -319,7 +312,6 @@
             openOrderModal(currentProduct, size);
         }
 
-        // Загрузка
         window.addEventListener('DOMContentLoaded', renderProduct);
     </script>
 </body>
