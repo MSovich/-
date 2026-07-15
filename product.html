@@ -121,7 +121,6 @@
             background: var(--accent-hover);
         }
 
-        /* Блок отзывов на странице товара */
         .product-reviews {
             margin-top: 60px;
             border-top: 1px solid var(--border-color);
@@ -221,7 +220,7 @@
             <div class="reviews-grid" id="product-reviews-container"></div>
             <div class="review-cta">
                 <p style="color: var(--text-muted); margin-bottom: 10px;">Поделитесь своим опытом — мы ценим каждого покупателя!</p>
-                <a href="https://t.me/vtuberhub_support" target="_blank" class="btn-primary">Оставить отзыв</a>
+                <a href="#" id="reviewTelegramLink" target="_blank" class="btn-primary">Оставить отзыв</a>
             </div>
         </div>
     </main>
@@ -274,6 +273,11 @@
 
             currentProduct = product;
 
+            // Обновляем ссылку для отзыва
+            const reviewLink = document.getElementById('reviewTelegramLink');
+            const reviewText = `Хочу оставить отзыв на товар: ${product.title}`;
+            reviewLink.href = `https://t.me/vtuberhub_support?text=${encodeURIComponent(reviewText)}`;
+
             const gallery = product.gallery || [product.photo];
             const mainImg = gallery[0];
 
@@ -318,15 +322,16 @@
             thumbElement.classList.add('active');
         }
 
-        // ---------- ОТЗЫВЫ ----------
+        // ---------- ОТЗЫВЫ (только для этого товара) ----------
         function renderReviews() {
-            const reviews = getReviews().filter(r => r.approved);
+            const allReviews = getReviews();
+            const productReviews = allReviews.filter(r => r.approved && r.productId === productId);
             const container = document.getElementById('product-reviews-container');
-            if (reviews.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); text-align:center; padding: 20px 0;">Пока нет отзывов. Будьте первыми!</p>';
+            if (productReviews.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align:center; padding: 20px 0;">Пока нет отзывов для этого товара. Будьте первыми!</p>';
                 return;
             }
-            container.innerHTML = reviews.map(r => `
+            container.innerHTML = productReviews.map(r => `
                 <div class="review-card">
                     <div class="review-author">${r.author}</div>
                     <div class="review-text">"${r.text}"</div>
