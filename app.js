@@ -150,37 +150,59 @@ function renderHeaderNav() {
     `;
 }
 
+// ===== УЛУЧШЕННАЯ ФУНКЦИЯ ДЛЯ БУРГЕР-МЕНЮ =====
 function initMobileNav() {
     const toggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    const closeNav = function() {
+        if (window.innerWidth <= 768) {
+            nav.classList.remove('open');
+            toggle.textContent = '☰';
+        }
+    };
+
+    // Клик по кнопке – переключение
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
         nav.classList.toggle('open');
         toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
     });
 
+    // Закрываем при клике вне шапки (на любом элементе страницы)
     document.addEventListener('click', function(e) {
         if (window.innerWidth <= 768) {
             const container = document.querySelector('.nav-container');
             if (container && !container.contains(e.target)) {
-                nav.classList.remove('open');
-                toggle.textContent = '☰';
+                closeNav();
             }
         }
     });
 
+    // Закрываем при скролле (пользователь листает страницу)
+    window.addEventListener('scroll', function() {
+        if (window.innerWidth <= 768 && nav.classList.contains('open')) {
+            closeNav();
+        }
+    });
+
+    // Закрываем при изменении размера окна (если стало больше 768px)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && nav.classList.contains('open')) {
+            closeNav();
+        }
+    });
+
+    // Закрываем при клике по любой ссылке внутри меню
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                nav.classList.remove('open');
-                toggle.textContent = '☰';
-            }
+            closeNav();
         });
     });
 }
 
+// Инициализация
 initDatabase();
 window.addEventListener('DOMContentLoaded', () => {
     renderHeaderNav();
