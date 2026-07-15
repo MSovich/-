@@ -432,7 +432,7 @@
             <div class="sidebar">
                 <input type="text" class="search-bar" placeholder="Поиск мерча..." id="shop-search" oninput="filterShop()">
 
-                <!-- НОВЫЙ ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ -->
+                <!-- ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ -->
                 <div class="filter-dropdown" id="filterDropdown">
                     <div class="filter-toggle" id="filterToggle">
                         <span class="burger-icon">
@@ -445,12 +445,8 @@
                         <span class="arrow">▼</span>
                     </div>
                     <div class="filter-panel" id="filterPanel">
-                        <!-- Список чекбоксов с прокруткой -->
-                        <div class="filter-options" id="filterOptions">
-                            <!-- сюда будут вставлены чекбоксы из JS -->
-                        </div>
+                        <div class="filter-options" id="filterOptions"></div>
                         <hr class="filter-divider">
-                        <!-- Кнопки статичны внизу -->
                         <div class="filter-actions">
                             <button class="filter-reset" id="filterReset">Сбросить все</button>
                             <button class="filter-apply" id="filterApply">Применить</button>
@@ -490,7 +486,7 @@
         // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
         let selectedStreamers = new Set();
 
-        // ---------- ОТРИСОВКА ЧЕКБОКСОВ ВНУТРИ СКРОЛЛ-КОНТЕЙНЕРА ----------
+        // ---------- ОТРИСОВКА ЧЕКБОКСОВ ----------
         function renderFilterCheckboxes() {
             const vtubers = getVtubers();
             const container = document.getElementById('filterOptions');
@@ -554,7 +550,6 @@
 
         // ---------- ПРИМЕНЕНИЕ ФИЛЬТРА ----------
         function applyFilter() {
-            // Собираем выбранные чекбоксы
             const checked = document.querySelectorAll('#filterOptions input[type="checkbox"]:checked');
             selectedStreamers.clear();
             checked.forEach(cb => {
@@ -562,7 +557,7 @@
             });
             updateFilterCount();
             renderProducts();
-            closeFilterPanel();
+            closeFilterPanel();  // <- ЗАКРЫВАЕМ ПАНЕЛЬ
         }
 
         function resetFilter() {
@@ -572,7 +567,7 @@
             selectedStreamers.clear();
             updateFilterCount();
             renderProducts();
-            closeFilterPanel();
+            closeFilterPanel();  // <- ЗАКРЫВАЕМ ПАНЕЛЬ
         }
 
         // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
@@ -685,7 +680,6 @@
             updateFilterCount();
             initFilterDropdown();
 
-            // Обработчики кнопок
             document.getElementById('filterReset').addEventListener('click', resetFilter);
             document.getElementById('filterApply').addEventListener('click', applyFilter);
 
