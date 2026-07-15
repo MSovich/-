@@ -167,14 +167,12 @@
             overflow: hidden;
             min-width: 220px;
             max-height: 420px;
-            display: flex;
             flex-direction: column;
         }
         .filter-panel.open {
-            display: flex;
+            display: flex !important; /* принудительно показываем */
         }
 
-        /* Контейнер с чекбоксами (скролл) */
         .filter-options {
             flex: 1;
             overflow-y: auto;
@@ -221,14 +219,12 @@
             flex: 1;
         }
 
-        /* Разделитель между списком и кнопками */
         .filter-divider {
             border: none;
             border-top: 1px solid var(--border-color);
             margin: 0;
         }
 
-        /* Кнопки статичны (закреплены внизу) */
         .filter-actions {
             display: flex;
             gap: 10px;
@@ -514,24 +510,32 @@
             document.getElementById('filterCount').textContent = count;
         }
 
-        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ ----------
-        function toggleFilterPanel(open) {
+        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ (ГАРАНТИРОВАННОЕ ЗАКРЫТИЕ) ----------
+        function closeFilterPanel() {
             const panel = document.getElementById('filterPanel');
             const toggle = document.getElementById('filterToggle');
-            if (open === undefined) {
-                panel.classList.toggle('open');
-                toggle.classList.toggle('open');
-            } else if (open) {
-                panel.classList.add('open');
-                toggle.classList.add('open');
-            } else {
-                panel.classList.remove('open');
-                toggle.classList.remove('open');
-            }
+            panel.classList.remove('open');
+            toggle.classList.remove('open');
+            // Принудительно скрываем через display, на случай если класс не работает
+            panel.style.display = 'none';
         }
 
-        function closeFilterPanel() {
-            toggleFilterPanel(false);
+        function openFilterPanel() {
+            const panel = document.getElementById('filterPanel');
+            const toggle = document.getElementById('filterToggle');
+            panel.classList.add('open');
+            toggle.classList.add('open');
+            panel.style.display = 'flex';
+        }
+
+        function toggleFilterPanel() {
+            const panel = document.getElementById('filterPanel');
+            const toggle = document.getElementById('filterToggle');
+            if (panel.classList.contains('open')) {
+                closeFilterPanel();
+            } else {
+                openFilterPanel();
+            }
         }
 
         function initFilterDropdown() {
@@ -540,11 +544,17 @@
                 e.stopPropagation();
                 toggleFilterPanel();
             });
+            // Закрываем при клике вне панели
             document.addEventListener('click', function(e) {
                 const dropdown = document.getElementById('filterDropdown');
                 if (dropdown && !dropdown.contains(e.target)) {
                     closeFilterPanel();
                 }
+            });
+            // Останавливаем всплытие внутри панели, чтобы клик по кнопкам не закрывал панель преждевременно
+            const panel = document.getElementById('filterPanel');
+            panel.addEventListener('click', function(e) {
+                e.stopPropagation();
             });
         }
 
@@ -557,7 +567,7 @@
             });
             updateFilterCount();
             renderProducts();
-            closeFilterPanel();  // <- ЗАКРЫВАЕМ ПАНЕЛЬ
+            closeFilterPanel(); // Закрываем панель
         }
 
         function resetFilter() {
@@ -567,7 +577,7 @@
             selectedStreamers.clear();
             updateFilterCount();
             renderProducts();
-            closeFilterPanel();  // <- ЗАКРЫВАЕМ ПАНЕЛЬ
+            closeFilterPanel(); // Закрываем панель
         }
 
         // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
