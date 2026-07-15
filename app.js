@@ -150,51 +150,47 @@ function renderHeaderNav() {
     `;
 }
 
-// ===== УЛУЧШЕННАЯ ФУНКЦИЯ ДЛЯ БУРГЕР-МЕНЮ =====
 function initMobileNav() {
     const toggle = document.querySelector('.nav-toggle');
     const nav = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    // Функция закрытия меню
     const closeNav = function() {
-        if (window.innerWidth <= 768) {
-            nav.classList.remove('open');
-            toggle.textContent = '☰';
-        }
+        nav.classList.remove('open');
+        toggle.textContent = '☰';
     };
 
-    // Клик по кнопке – переключение
+    // Открытие/закрытие по кнопке
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
         nav.classList.toggle('open');
         toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
     });
 
-    // Закрываем при клике вне шапки (на любом элементе страницы)
+    // Закрываем при клике вне шапки
     document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768) {
-            const container = document.querySelector('.nav-container');
-            if (container && !container.contains(e.target)) {
-                closeNav();
-            }
-        }
-    });
-
-    // Закрываем при скролле (пользователь листает страницу)
-    window.addEventListener('scroll', function() {
-        if (window.innerWidth <= 768 && nav.classList.contains('open')) {
+        const container = document.querySelector('.nav-container');
+        if (container && !container.contains(e.target)) {
             closeNav();
         }
     });
 
-    // Закрываем при изменении размера окна (если стало больше 768px)
+    // Закрываем при скролле (на всех устройствах)
+    window.addEventListener('scroll', function() {
+        if (nav.classList.contains('open')) {
+            closeNav();
+        }
+    });
+
+    // Закрываем при изменении размера окна (если становится > 768px)
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768 && nav.classList.contains('open')) {
             closeNav();
         }
     });
 
-    // Закрываем при клике по любой ссылке внутри меню
+    // Закрываем при клике по ссылкам внутри меню
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function() {
             closeNav();
@@ -202,7 +198,6 @@ function initMobileNav() {
     });
 }
 
-// Инициализация
 initDatabase();
 window.addEventListener('DOMContentLoaded', () => {
     renderHeaderNav();
