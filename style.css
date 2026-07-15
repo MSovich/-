@@ -1590,3 +1590,21 @@ button, .filter-toggle, .sidebar-item, .vtuber-card, .product-card, .modal-close
 input, select, textarea {
     font-size: 16px !important; /* предотвращает масштабирование на iOS */
 }
+
+/* ===== АДАПТАЦИЯ ЗАГОЛОВКА НА ГЛАВНОЙ СТРАНИЦЕ ===== */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.2rem !important;
+        line-height: 1.3;
+    }
+}
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.6rem !important;
+        line-height: 1.3;
+        margin-bottom: 15px;
+    }
+    .hero p {
+        font-size: 1rem !important;
+    }
+}
