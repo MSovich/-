@@ -104,7 +104,7 @@
             pointer-events: auto;
         }
 
-        /* ---- НОВЫЙ ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ ---- */
+        /* ---- ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ ---- */
         .filter-dropdown {
             position: relative;
             margin-bottom: 20px;
@@ -170,7 +170,7 @@
             flex-direction: column;
         }
         .filter-panel.open {
-            display: flex !important; /* принудительно показываем */
+            display: flex !important;
         }
 
         .filter-options {
@@ -482,6 +482,26 @@
         // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
         let selectedStreamers = new Set();
 
+        // ---------- РАБОТА С SESSION STORAGE ----------
+        function saveFilters() {
+            const data = Array.from(selectedStreamers);
+            sessionStorage.setItem('shopFilters', JSON.stringify(data));
+        }
+
+        function loadFilters() {
+            const saved = sessionStorage.getItem('shopFilters');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (Array.isArray(data)) {
+                        selectedStreamers = new Set(data);
+                        return true;
+                    }
+                } catch (e) {}
+            }
+            return false;
+        }
+
         // ---------- ОТРИСОВКА ЧЕКБОКСОВ ----------
         function renderFilterCheckboxes() {
             const vtubers = getVtubers();
@@ -510,13 +530,12 @@
             document.getElementById('filterCount').textContent = count;
         }
 
-        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ (ГАРАНТИРОВАННОЕ ЗАКРЫТИЕ) ----------
+        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ ----------
         function closeFilterPanel() {
             const panel = document.getElementById('filterPanel');
             const toggle = document.getElementById('filterToggle');
             panel.classList.remove('open');
             toggle.classList.remove('open');
-            // Принудительно скрываем через display, на случай если класс не работает
             panel.style.display = 'none';
         }
 
@@ -530,7 +549,6 @@
 
         function toggleFilterPanel() {
             const panel = document.getElementById('filterPanel');
-            const toggle = document.getElementById('filterToggle');
             if (panel.classList.contains('open')) {
                 closeFilterPanel();
             } else {
@@ -544,14 +562,12 @@
                 e.stopPropagation();
                 toggleFilterPanel();
             });
-            // Закрываем при клике вне панели
             document.addEventListener('click', function(e) {
                 const dropdown = document.getElementById('filterDropdown');
                 if (dropdown && !dropdown.contains(e.target)) {
                     closeFilterPanel();
                 }
             });
-            // Останавливаем всплытие внутри панели, чтобы клик по кнопкам не закрывал панель преждевременно
             const panel = document.getElementById('filterPanel');
             panel.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -566,8 +582,9 @@
                 selectedStreamers.add(cb.value);
             });
             updateFilterCount();
+            saveFilters();       // сохраняем
             renderProducts();
-            closeFilterPanel(); // Закрываем панель
+            closeFilterPanel();
         }
 
         function resetFilter() {
@@ -576,8 +593,9 @@
             });
             selectedStreamers.clear();
             updateFilterCount();
+            saveFilters();       // сохраняем пустой массив
             renderProducts();
-            closeFilterPanel(); // Закрываем панель
+            closeFilterPanel();
         }
 
         // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
@@ -680,19 +698,35 @@
 
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         window.addEventListener('DOMContentLoaded', () => {
+            // 1. Проверяем параметр streamer в URL (если есть)
             const urlParams = new URLSearchParams(window.location.search);
             const streamerParam = urlParams.get('streamer');
+
+            // 2. Загружаем сохранённые фильтры
+            const hasSaved = loadFilters();
+
+            // 3. Если есть параметр streamer, добавляем его в выбранные и сохраняем
             if (streamerParam) {
                 selectedStreamers.add(streamerParam);
+                saveFilters();
+            } else if (!hasSaved) {
+                // Если нет сохранённых и нет параметра, оставляем пустой набор
+                selectedStreamers.clear();
+                saveFilters();
             }
 
+            // 4. Отрисовываем чекбоксы с учётом текущих selectedStreamers
             renderFilterCheckboxes();
             updateFilterCount();
+
+            // 5. Инициализируем панель
             initFilterDropdown();
 
+            // 6. Назначаем обработчики кнопок
             document.getElementById('filterReset').addEventListener('click', resetFilter);
             document.getElementById('filterApply').addEventListener('click', applyFilter);
 
+            // 7. Отображаем товары
             renderProducts();
         });
     </script>
