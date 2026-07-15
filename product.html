@@ -13,7 +13,6 @@
             text-decoration: none;
             font-size: 16px;
             transition: color 0.3s ease;
-            cursor: pointer;
         }
         .back-link:hover {
             color: var(--accent-color);
@@ -166,13 +165,15 @@
         </div>
     </header>
     <main>
-        <a class="back-link" onclick="history.back()">Назад</a>
+        <!-- Кнопка "← Вернуться в магазин" ведёт на shop.html -->
+        <a href="shop.html" class="back-link">Вернуться в магазин</a>
 
         <div id="product-content">
             <p style="text-align:center; color: var(--text-muted); padding: 40px 0;">Загрузка товара...</p>
         </div>
     </main>
 
+    <!-- Модальное окно заказа (без изменений) -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal">
             <div class="modal-header">

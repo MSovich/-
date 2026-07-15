@@ -56,49 +56,59 @@
         .social-btn:hover {
             background: #333;
         }
-        .arts-gallery {
-            margin-top: 20px;
+
+        .arts-preview {
+            margin-top: 30px;
             border-top: 1px solid var(--border-color);
             padding-top: 30px;
         }
-        .arts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+        .arts-preview h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
         }
-        .art-card {
+        .arts-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .arts-preview-grid .art-thumb {
             background: #0E0E0E;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
-        .art-card img {
+        .arts-preview-grid .art-thumb:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-color);
+        }
+        .arts-preview-grid .art-thumb img {
             width: 100%;
-            height: 150px;
+            height: 120px;
             object-fit: cover;
         }
-        .art-caption {
-            padding: 10px;
-            font-size: 13px;
+        .arts-preview-grid .art-thumb .art-caption {
+            padding: 8px;
+            font-size: 12px;
             color: var(--text-muted);
             text-align: center;
         }
-        .back-link {
+        .arts-preview .view-all-btn {
             display: inline-block;
-            margin-bottom: 30px;
-            color: var(--text-muted);
+            background: var(--accent-color);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
             text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s ease;
-            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
         }
-        .back-link:hover {
-            color: var(--accent-color);
+        .arts-preview .view-all-btn:hover {
+            background: var(--accent-hover);
         }
-        .back-link::before {
-            content: '← ';
-        }
+
         .shop-btn {
             background: var(--accent-color);
             border: none;
@@ -118,6 +128,21 @@
             background: var(--accent-hover);
         }
 
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: var(--accent-color);
+        }
+        .back-link::before {
+            content: '← ';
+        }
+
         @media (max-width: 768px) {
             .vtuber-detail {
                 grid-template-columns: 1fr;
@@ -129,13 +154,19 @@
             .vtuber-name-big {
                 font-size: 28px;
             }
+            .arts-preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
         }
         @media (max-width: 480px) {
             .vtuber-photo {
                 height: 220px;
             }
-            .arts-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            .arts-preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            .arts-preview-grid .art-thumb img {
+                height: 90px;
             }
         }
     </style>
@@ -149,7 +180,8 @@
         </div>
     </header>
     <main>
-        <a class="back-link" onclick="history.back()">Назад</a>
+        <!-- Кнопка "← Все втуберы" ведёт на wiki.html -->
+        <a href="wiki.html" class="back-link">Все втуберы</a>
 
         <div id="vtuber-content">
             <p style="text-align:center; color: var(--text-muted); padding: 40px 0;">Загрузка...</p>
@@ -179,21 +211,24 @@
                 return;
             }
 
-            const arts = getArts().filter(a => a.streamerId === vtuber.id);
+            const allArts = getArts();
+            const arts = allArts.filter(a => a.streamerId === vtuber.id);
+            const previewArts = arts.slice(0, 4);
 
             let artsHtml = '';
             if (arts.length === 0) {
                 artsHtml = '<p style="color: var(--text-muted);">Арты пока не добавлены.</p>';
             } else {
                 artsHtml = `
-                    <div class="arts-grid">
-                        ${arts.map(a => `
-                            <div class="art-card">
+                    <div class="arts-preview-grid">
+                        ${previewArts.map(a => `
+                            <div class="art-thumb" onclick="window.location.href='gallery.html?id=${vtuber.id}'">
                                 <img src="${a.imageUrl}" alt="${a.caption}">
-                                <div class="art-caption">${a.caption || 'Fanart'}</div>
+                                <div class="art-caption">${a.caption || 'Арт'}</div>
                             </div>
                         `).join('')}
                     </div>
+                    <a href="gallery.html?id=${vtuber.id}" class="view-all-btn">Смотреть все арты (${arts.length})</a>
                 `;
             }
 
@@ -216,8 +251,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="arts-gallery">
-                    <h3 style="font-size: 20px; margin-bottom: 10px;">Галерея артов</h3>
+                <div class="arts-preview">
+                    <h3>Галерея артов</h3>
                     ${artsHtml}
                 </div>
             `;
