@@ -220,7 +220,7 @@
             <div class="reviews-grid" id="product-reviews-container"></div>
             <div class="review-cta">
                 <p style="color: var(--text-muted); margin-bottom: 10px;">Поделитесь своим опытом — мы ценим каждого покупателя!</p>
-                <a href="#" id="reviewTelegramLink" target="_blank" class="btn-primary">Оставить отзыв</a>
+                <a href="https://web.telegram.org/a/#8320234702" target="_blank" class="btn-primary">Оставить отзыв</a>
             </div>
         </div>
     </main>
@@ -272,11 +272,6 @@
             }
 
             currentProduct = product;
-
-            // Обновляем ссылку для отзыва
-            const reviewLink = document.getElementById('reviewTelegramLink');
-            const reviewText = `Хочу оставить отзыв на товар: ${product.title}`;
-            reviewLink.href = `https://t.me/vtuberhub_support?text=${encodeURIComponent(reviewText)}`;
 
             const gallery = product.gallery || [product.photo];
             const mainImg = gallery[0];
