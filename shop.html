@@ -582,7 +582,7 @@
                 selectedStreamers.add(cb.value);
             });
             updateFilterCount();
-            saveFilters();       // сохраняем
+            saveFilters();
             renderProducts();
             closeFilterPanel();
         }
@@ -593,7 +593,7 @@
             });
             selectedStreamers.clear();
             updateFilterCount();
-            saveFilters();       // сохраняем пустой массив
+            saveFilters(); // сохраняем пустой массив
             renderProducts();
             closeFilterPanel();
         }
@@ -698,35 +698,30 @@
 
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         window.addEventListener('DOMContentLoaded', () => {
-            // 1. Проверяем параметр streamer в URL (если есть)
             const urlParams = new URLSearchParams(window.location.search);
             const streamerParam = urlParams.get('streamer');
 
-            // 2. Загружаем сохранённые фильтры
-            const hasSaved = loadFilters();
-
-            // 3. Если есть параметр streamer, добавляем его в выбранные и сохраняем
+            // Если есть параметр streamer, сбрасываем все фильтры и устанавливаем только этого стримера
             if (streamerParam) {
-                selectedStreamers.add(streamerParam);
-                saveFilters();
-            } else if (!hasSaved) {
-                // Если нет сохранённых и нет параметра, оставляем пустой набор
                 selectedStreamers.clear();
-                saveFilters();
+                selectedStreamers.add(streamerParam);
+                saveFilters(); // перезаписываем sessionStorage
+            } else {
+                // Иначе загружаем сохранённые фильтры
+                const hasSaved = loadFilters();
+                if (!hasSaved) {
+                    selectedStreamers.clear();
+                    saveFilters();
+                }
             }
 
-            // 4. Отрисовываем чекбоксы с учётом текущих selectedStreamers
             renderFilterCheckboxes();
             updateFilterCount();
-
-            // 5. Инициализируем панель
             initFilterDropdown();
 
-            // 6. Назначаем обработчики кнопок
             document.getElementById('filterReset').addEventListener('click', resetFilter);
             document.getElementById('filterApply').addEventListener('click', applyFilter);
 
-            // 7. Отображаем товары
             renderProducts();
         });
     </script>
