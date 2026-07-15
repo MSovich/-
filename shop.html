@@ -104,7 +104,7 @@
             pointer-events: auto;
         }
 
-        /* ---- НОВЫЙ ФИЛЬТР (бургер с чекбоксами) ---- */
+        /* ---- НОВЫЙ ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ ---- */
         .filter-dropdown {
             position: relative;
             margin-bottom: 20px;
@@ -162,16 +162,40 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px 16px;
             z-index: 50;
-            max-height: 300px;
-            overflow-y: auto;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+            min-width: 220px;
+            max-height: 420px;
+            display: flex;
+            flex-direction: column;
         }
         .filter-panel.open {
-            display: block;
+            display: flex;
         }
-        .filter-panel .filter-option {
+
+        /* Контейнер с чекбоксами (скролл) */
+        .filter-options {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            max-height: 260px;
+        }
+        .filter-options::-webkit-scrollbar {
+            width: 4px;
+        }
+        .filter-options::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .filter-options::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        .filter-options::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        .filter-option {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -180,26 +204,38 @@
             border-radius: 4px;
             transition: background 0.2s;
         }
-        .filter-panel .filter-option:hover {
+        .filter-option:hover {
             background: #1A1A1A;
         }
-        .filter-panel .filter-option input[type="checkbox"] {
+        .filter-option input[type="checkbox"] {
             width: 18px;
             height: 18px;
             accent-color: var(--accent-color);
             cursor: pointer;
             flex-shrink: 0;
         }
-        .filter-panel .filter-option label {
+        .filter-option label {
             font-size: 14px;
             color: var(--text-main);
             cursor: pointer;
             flex: 1;
         }
+
+        /* Разделитель между списком и кнопками */
+        .filter-divider {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 0;
+        }
+
+        /* Кнопки статичны (закреплены внизу) */
         .filter-actions {
             display: flex;
             gap: 10px;
-            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
         .filter-actions button {
             flex: 1;
@@ -219,6 +255,7 @@
         .filter-actions .filter-reset:hover {
             border-color: var(--accent-color);
             color: var(--text-main);
+            background: rgba(230, 57, 70, 0.05);
         }
         .filter-actions .filter-apply {
             background: var(--accent-color);
@@ -227,6 +264,7 @@
         .filter-actions .filter-apply:hover {
             background: var(--accent-hover);
         }
+
         .filter-count {
             background: var(--accent-color);
             color: white;
@@ -276,18 +314,27 @@
                 font-size: 14px;
             }
             .filter-panel {
-                padding: 10px 12px;
-                max-height: 250px;
+                max-height: 380px;
+                min-width: unset;
+                left: 0;
+                right: 0;
             }
-            .filter-panel .filter-option {
+            .filter-options {
+                max-height: 220px;
+                padding: 10px 12px;
+            }
+            .filter-option {
                 padding: 10px 4px;
             }
-            .filter-panel .filter-option label {
+            .filter-option label {
                 font-size: 15px;
             }
-            .filter-panel .filter-option input[type="checkbox"] {
+            .filter-option input[type="checkbox"] {
                 width: 20px;
                 height: 20px;
+            }
+            .filter-actions {
+                padding: 10px 12px;
             }
             .filter-actions button {
                 padding: 12px;
@@ -345,9 +392,11 @@
             main { padding: 10px 6px !important; }
             .sidebar { padding: 8px 5px !important; }
             .filter-toggle { padding: 8px 12px; font-size: 13px; }
-            .filter-panel { padding: 8px 10px; max-height: 200px; }
-            .filter-panel .filter-option { padding: 8px 2px; }
-            .filter-panel .filter-option label { font-size: 14px; }
+            .filter-panel { max-height: 340px; }
+            .filter-options { max-height: 180px; padding: 8px 10px; }
+            .filter-option { padding: 8px 2px; }
+            .filter-option label { font-size: 14px; }
+            .filter-actions { padding: 8px 10px; }
             .filter-actions button { padding: 10px; font-size: 14px; }
 
             .product-card { min-height: 100px; border-radius: 8px; }
@@ -383,7 +432,7 @@
             <div class="sidebar">
                 <input type="text" class="search-bar" placeholder="Поиск мерча..." id="shop-search" oninput="filterShop()">
 
-                <!-- НОВЫЙ ФИЛЬТР С БУРГЕРОМ И ЧЕКБОКСАМИ -->
+                <!-- НОВЫЙ ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ -->
                 <div class="filter-dropdown" id="filterDropdown">
                     <div class="filter-toggle" id="filterToggle">
                         <span class="burger-icon">
@@ -396,7 +445,12 @@
                         <span class="arrow">▼</span>
                     </div>
                     <div class="filter-panel" id="filterPanel">
-                        <!-- Чекбоксы будут вставлены из JS -->
+                        <!-- Список чекбоксов с прокруткой -->
+                        <div class="filter-options" id="filterOptions">
+                            <!-- сюда будут вставлены чекбоксы из JS -->
+                        </div>
+                        <hr class="filter-divider">
+                        <!-- Кнопки статичны внизу -->
                         <div class="filter-actions">
                             <button class="filter-reset" id="filterReset">Сбросить все</button>
                             <button class="filter-apply" id="filterApply">Применить</button>
@@ -434,15 +488,13 @@
     <script src="app.js"></script>
     <script>
         // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
-        let selectedStreamers = new Set(); // множество ID выбранных стримеров (применённых)
+        let selectedStreamers = new Set();
 
-        // ---------- ОТРИСОВКА ФИЛЬТРОВ (ЧЕКБОКСЫ) ----------
+        // ---------- ОТРИСОВКА ЧЕКБОКСОВ ВНУТРИ СКРОЛЛ-КОНТЕЙНЕРА ----------
         function renderFilterCheckboxes() {
             const vtubers = getVtubers();
-            const panel = document.getElementById('filterPanel');
-            // Удаляем всё, кроме .filter-actions
-            const actions = panel.querySelector('.filter-actions');
-            panel.innerHTML = '';
+            const container = document.getElementById('filterOptions');
+            container.innerHTML = '';
             vtubers.forEach(v => {
                 const div = document.createElement('div');
                 div.className = 'filter-option';
@@ -450,48 +502,13 @@
                 checkbox.type = 'checkbox';
                 checkbox.id = `filter-${v.id}`;
                 checkbox.value = v.id;
-                // Отмечаем, если стример уже в selectedStreamers
                 checkbox.checked = selectedStreamers.has(v.id);
-                // При изменении чекбокса НЕ применяем фильтр, только меняем состояние
-                checkbox.addEventListener('change', function(e) {
-                    e.stopPropagation();
-                    // Ничего не делаем, только обновляем счётчик? лучше при применении
-                });
                 const label = document.createElement('label');
                 label.htmlFor = `filter-${v.id}`;
                 label.textContent = v.name;
                 div.appendChild(checkbox);
                 div.appendChild(label);
-                panel.appendChild(div);
-            });
-            // Добавляем кнопки действий
-            panel.appendChild(actions);
-            // Обработчики для кнопок
-            document.getElementById('filterReset').addEventListener('click', function(e) {
-                e.stopPropagation();
-                // Снимаем все чекбоксы
-                document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(cb => {
-                    cb.checked = false;
-                });
-                // Очищаем выбранные стримеры и применяем
-                selectedStreamers.clear();
-                updateFilterCount();
-                renderProducts();
-                // Закрываем панель
-                closeFilterPanel();
-            });
-            document.getElementById('filterApply').addEventListener('click', function(e) {
-                e.stopPropagation();
-                // Собираем выбранные чекбоксы
-                const checked = document.querySelectorAll('#filterPanel input[type="checkbox"]:checked');
-                selectedStreamers.clear();
-                checked.forEach(cb => {
-                    selectedStreamers.add(cb.value);
-                });
-                updateFilterCount();
-                renderProducts();
-                // Закрываем панель
-                closeFilterPanel();
+                container.appendChild(div);
             });
         }
 
@@ -501,7 +518,7 @@
             document.getElementById('filterCount').textContent = count;
         }
 
-        // ---------- УПРАВЛЕНИЕ ОТКРЫТИЕМ/ЗАКРЫТИЕМ ПАНЕЛИ ----------
+        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ ----------
         function toggleFilterPanel(open) {
             const panel = document.getElementById('filterPanel');
             const toggle = document.getElementById('filterToggle');
@@ -527,13 +544,35 @@
                 e.stopPropagation();
                 toggleFilterPanel();
             });
-            // Закрываем при клике вне блока
             document.addEventListener('click', function(e) {
                 const dropdown = document.getElementById('filterDropdown');
                 if (dropdown && !dropdown.contains(e.target)) {
                     closeFilterPanel();
                 }
             });
+        }
+
+        // ---------- ПРИМЕНЕНИЕ ФИЛЬТРА ----------
+        function applyFilter() {
+            // Собираем выбранные чекбоксы
+            const checked = document.querySelectorAll('#filterOptions input[type="checkbox"]:checked');
+            selectedStreamers.clear();
+            checked.forEach(cb => {
+                selectedStreamers.add(cb.value);
+            });
+            updateFilterCount();
+            renderProducts();
+            closeFilterPanel();
+        }
+
+        function resetFilter() {
+            document.querySelectorAll('#filterOptions input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            selectedStreamers.clear();
+            updateFilterCount();
+            renderProducts();
+            closeFilterPanel();
         }
 
         // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
@@ -575,7 +614,7 @@
         }
 
         function filterShop() {
-            renderProducts(); // поиск применяется сразу при вводе (можно оставить)
+            renderProducts();
         }
 
         function goToProduct(id) {
@@ -645,6 +684,11 @@
             renderFilterCheckboxes();
             updateFilterCount();
             initFilterDropdown();
+
+            // Обработчики кнопок
+            document.getElementById('filterReset').addEventListener('click', resetFilter);
+            document.getElementById('filterApply').addEventListener('click', applyFilter);
+
             renderProducts();
         });
     </script>
