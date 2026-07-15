@@ -158,12 +158,48 @@ function initMobileNav() {
     const closeNav = function() {
         nav.classList.remove('open');
         toggle.textContent = '☰';
+        // Удаляем обработчики скролла
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('wheel', handleWheel);
+        window.removeEventListener('scroll', handleScroll);
+    };
+
+    const handleTouchMove = function(e) {
+        // Закрываем, если касание произошло вне меню
+        if (!nav.contains(e.target)) {
+            closeNav();
+        }
+    };
+
+    const handleWheel = function(e) {
+        // Закрываем, если колёсико мыши использовано вне меню
+        if (!nav.contains(e.target)) {
+            closeNav();
+        }
+    };
+
+    const handleScroll = function() {
+        // Просто закрываем при любом скролле окна
+        if (nav.classList.contains('open')) {
+            closeNav();
+        }
     };
 
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
         nav.classList.toggle('open');
         toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
+        if (nav.classList.contains('open')) {
+            // Добавляем обработчики только когда меню открыто
+            document.addEventListener('touchmove', handleTouchMove, { passive: true });
+            document.addEventListener('wheel', handleWheel, { passive: true });
+            window.addEventListener('scroll', handleScroll, { passive: true });
+        } else {
+            // Удаляем обработчики, если меню закрыто
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('wheel', handleWheel);
+            window.removeEventListener('scroll', handleScroll);
+        }
     });
 
     // Закрываем при клике вне шапки и вне меню
@@ -173,19 +209,6 @@ function initMobileNav() {
             closeNav();
         }
     });
-
-    // Закрываем при скролле (любом)
-    const scrollHandler = function() {
-        if (nav.classList.contains('open')) {
-            closeNav();
-        }
-    };
-
-    // Добавляем обработчики на все возможные источники скролла
-    window.addEventListener('scroll', scrollHandler);
-    document.addEventListener('scroll', scrollHandler);
-    document.body.addEventListener('scroll', scrollHandler);
-    document.addEventListener('touchmove', scrollHandler);
 
     // Закрываем при клике по ссылкам внутри меню
     nav.querySelectorAll('a').forEach(link => {
