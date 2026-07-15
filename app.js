@@ -174,15 +174,19 @@ function initMobileNav() {
         }
     });
 
+    // Закрываем при скролле (пользователь листает страницу)
+    window.addEventListener('scroll', function() {
+        if (nav.classList.contains('open')) {
+            closeNav();
+        }
+    });
+
     // Закрываем при клике по ссылкам внутри меню
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function() {
             closeNav();
         });
     });
-
-    // НЕ закрываем при скролле (убрано)
-    // window.addEventListener('scroll', closeNav);
 
     // Закрываем при изменении размера окна (если становится > 768px)
     window.addEventListener('resize', function() {
