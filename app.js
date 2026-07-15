@@ -174,12 +174,18 @@ function initMobileNav() {
         }
     });
 
-    // Закрываем при скролле (пользователь листает страницу)
-    window.addEventListener('scroll', function() {
+    // Закрываем при скролле (любом)
+    const scrollHandler = function() {
         if (nav.classList.contains('open')) {
             closeNav();
         }
-    });
+    };
+
+    // Добавляем обработчики на все возможные источники скролла
+    window.addEventListener('scroll', scrollHandler);
+    document.addEventListener('scroll', scrollHandler);
+    document.body.addEventListener('scroll', scrollHandler);
+    document.addEventListener('touchmove', scrollHandler);
 
     // Закрываем при клике по ссылкам внутри меню
     nav.querySelectorAll('a').forEach(link => {
