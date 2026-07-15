@@ -196,23 +196,36 @@
             cursor: pointer;
             flex: 1;
         }
-        .filter-panel .filter-reset {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            margin-top: 8px;
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .filter-actions button {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .filter-actions .filter-reset {
             background: transparent;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
             color: var(--text-muted);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
         }
-        .filter-panel .filter-reset:hover {
+        .filter-actions .filter-reset:hover {
             border-color: var(--accent-color);
             color: var(--text-main);
+        }
+        .filter-actions .filter-apply {
+            background: var(--accent-color);
+            color: white;
+        }
+        .filter-actions .filter-apply:hover {
+            background: var(--accent-hover);
         }
         .filter-count {
             background: var(--accent-color);
@@ -258,7 +271,6 @@
                 box-sizing: border-box;
             }
 
-            /* Фильтр в мобильной версии */
             .filter-toggle {
                 padding: 10px 14px;
                 font-size: 14px;
@@ -276,6 +288,10 @@
             .filter-panel .filter-option input[type="checkbox"] {
                 width: 20px;
                 height: 20px;
+            }
+            .filter-actions button {
+                padding: 12px;
+                font-size: 15px;
             }
 
             .shop-grid {
@@ -332,6 +348,7 @@
             .filter-panel { padding: 8px 10px; max-height: 200px; }
             .filter-panel .filter-option { padding: 8px 2px; }
             .filter-panel .filter-option label { font-size: 14px; }
+            .filter-actions button { padding: 10px; font-size: 14px; }
 
             .product-card { min-height: 100px; border-radius: 8px; }
             .product-img { width: 100px; min-height: 100px; }
@@ -380,7 +397,10 @@
                     </div>
                     <div class="filter-panel" id="filterPanel">
                         <!-- Чекбоксы будут вставлены из JS -->
-                        <button class="filter-reset" id="filterReset">Сбросить все</button>
+                        <div class="filter-actions">
+                            <button class="filter-reset" id="filterReset">Сбросить все</button>
+                            <button class="filter-apply" id="filterApply">Применить</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -414,14 +434,14 @@
     <script src="app.js"></script>
     <script>
         // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
-        let selectedStreamers = new Set(); // множество ID выбранных стримеров
+        let selectedStreamers = new Set(); // множество ID выбранных стримеров (применённых)
 
         // ---------- ОТРИСОВКА ФИЛЬТРОВ (ЧЕКБОКСЫ) ----------
         function renderFilterCheckboxes() {
             const vtubers = getVtubers();
             const panel = document.getElementById('filterPanel');
-            // Удаляем все чекбоксы, оставляя только кнопку сброса
-            const resetBtn = document.getElementById('filterReset');
+            // Удаляем всё, кроме .filter-actions
+            const actions = panel.querySelector('.filter-actions');
             panel.innerHTML = '';
             vtubers.forEach(v => {
                 const div = document.createElement('div');
@@ -430,16 +450,12 @@
                 checkbox.type = 'checkbox';
                 checkbox.id = `filter-${v.id}`;
                 checkbox.value = v.id;
+                // Отмечаем, если стример уже в selectedStreamers
                 checkbox.checked = selectedStreamers.has(v.id);
+                // При изменении чекбокса НЕ применяем фильтр, только меняем состояние
                 checkbox.addEventListener('change', function(e) {
                     e.stopPropagation();
-                    if (this.checked) {
-                        selectedStreamers.add(this.value);
-                    } else {
-                        selectedStreamers.delete(this.value);
-                    }
-                    updateFilterCount();
-                    renderProducts();
+                    // Ничего не делаем, только обновляем счётчик? лучше при применении
                 });
                 const label = document.createElement('label');
                 label.htmlFor = `filter-${v.id}`;
@@ -448,50 +464,75 @@
                 div.appendChild(label);
                 panel.appendChild(div);
             });
-            // Добавляем кнопку сброса
-            panel.appendChild(resetBtn);
-            // Обработчик сброса
-            resetBtn.addEventListener('click', function(e) {
+            // Добавляем кнопки действий
+            panel.appendChild(actions);
+            // Обработчики для кнопок
+            document.getElementById('filterReset').addEventListener('click', function(e) {
                 e.stopPropagation();
-                selectedStreamers.clear();
-                // Обновляем состояние чекбоксов
+                // Снимаем все чекбоксы
                 document.querySelectorAll('#filterPanel input[type="checkbox"]').forEach(cb => {
                     cb.checked = false;
                 });
+                // Очищаем выбранные стримеры и применяем
+                selectedStreamers.clear();
                 updateFilterCount();
                 renderProducts();
+                // Закрываем панель
+                closeFilterPanel();
+            });
+            document.getElementById('filterApply').addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Собираем выбранные чекбоксы
+                const checked = document.querySelectorAll('#filterPanel input[type="checkbox"]:checked');
+                selectedStreamers.clear();
+                checked.forEach(cb => {
+                    selectedStreamers.add(cb.value);
+                });
+                updateFilterCount();
+                renderProducts();
+                // Закрываем панель
+                closeFilterPanel();
             });
         }
 
-        // ---------- ОБНОВЛЕНИЕ СЧЁТЧИКА ВЫБРАННЫХ ----------
+        // ---------- ОБНОВЛЕНИЕ СЧЁТЧИКА ----------
         function updateFilterCount() {
             const count = selectedStreamers.size;
             document.getElementById('filterCount').textContent = count;
         }
 
-        // ---------- ОБРАБОТЧИКИ ДЛЯ БУРГЕР-МЕНЮ ----------
+        // ---------- УПРАВЛЕНИЕ ОТКРЫТИЕМ/ЗАКРЫТИЕМ ПАНЕЛИ ----------
+        function toggleFilterPanel(open) {
+            const panel = document.getElementById('filterPanel');
+            const toggle = document.getElementById('filterToggle');
+            if (open === undefined) {
+                panel.classList.toggle('open');
+                toggle.classList.toggle('open');
+            } else if (open) {
+                panel.classList.add('open');
+                toggle.classList.add('open');
+            } else {
+                panel.classList.remove('open');
+                toggle.classList.remove('open');
+            }
+        }
+
+        function closeFilterPanel() {
+            toggleFilterPanel(false);
+        }
+
         function initFilterDropdown() {
             const toggle = document.getElementById('filterToggle');
-            const panel = document.getElementById('filterPanel');
-
             toggle.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const isOpen = panel.classList.toggle('open');
-                toggle.classList.toggle('open', isOpen);
+                toggleFilterPanel();
             });
-
             // Закрываем при клике вне блока
             document.addEventListener('click', function(e) {
                 const dropdown = document.getElementById('filterDropdown');
                 if (dropdown && !dropdown.contains(e.target)) {
-                    panel.classList.remove('open');
-                    toggle.classList.remove('open');
+                    closeFilterPanel();
                 }
-            });
-
-            // Закрываем при выборе чекбокса (опционально, чтобы не мешать)
-            panel.addEventListener('change', function(e) {
-                // не закрываем, чтобы можно было выбрать несколько
             });
         }
 
@@ -501,7 +542,6 @@
             const grid = document.getElementById('shop-products-grid');
             const searchVal = document.getElementById('shop-search').value.toLowerCase();
 
-            // Если выбраны стримеры, фильтруем по ним, иначе показываем все
             const filtered = products.filter(p => {
                 const matchesStreamer = selectedStreamers.size === 0 || selectedStreamers.has(p.vtuberId);
                 const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
@@ -535,7 +575,7 @@
         }
 
         function filterShop() {
-            renderProducts();
+            renderProducts(); // поиск применяется сразу при вводе (можно оставить)
         }
 
         function goToProduct(id) {
@@ -596,11 +636,9 @@
 
         // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         window.addEventListener('DOMContentLoaded', () => {
-            // Обрабатываем параметр streamer из URL (для совместимости)
             const urlParams = new URLSearchParams(window.location.search);
             const streamerParam = urlParams.get('streamer');
             if (streamerParam) {
-                // Если пришли с одного стримера, добавляем его в выбранные
                 selectedStreamers.add(streamerParam);
             }
 
