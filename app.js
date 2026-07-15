@@ -103,10 +103,12 @@ const DEFAULT_NEWS = [
     { id: 2, title: "Концерт Gawr Gura в Атлантиде", content: "Виртуальный концерт состоится уже в эту субботу. Эксклюзивные брелоки в продаже.", publishedAt: "2026-05-25" }
 ];
 
+// Отзывы с привязкой к товарам
 const DEFAULT_REVIEWS = [
-    { id: 1, author: "@AlexVtuberFan", text: "Качество худи от Gawr Gura просто нереальное. Очень плотная ткань, принт после 10 стирок как новый. Жду новый дроп!", approved: true },
-    { id: 2, author: "@ShyShipper", text: "Заказывал брелок и футболку с Shylily. Доставка СДЭКом за 4 дня. Очень крутой минималистичный дизайн сайта, все супер.", approved: true },
-    { id: 3, author: "@CalliMyQueen", text: "Техподдержка ответила за 5 минут, помогли поменять размер в заказе до отправки. Сервис на высоте!", approved: true }
+    { id: 1, productId: 1, author: "@AlexVtuberFan", text: "Качество худи от Gawr Gura просто нереальное. Очень плотная ткань, принт после 10 стирок как новый. Жду новый дроп!", approved: true },
+    { id: 2, productId: 3, author: "@ShyShipper", text: "Заказывал брелок и футболку с Shylily. Доставка СДЭКом за 4 дня. Очень крутой минималистичный дизайн сайта, все супер.", approved: true },
+    { id: 3, productId: 1, author: "@CalliMyQueen", text: "Техподдержка ответила за 5 минут, помогли поменять размер в заказе до отправки. Сервис на высоте!", approved: true },
+    { id: 4, productId: 4, author: "@LilyLover", text: "Плед просто шикарный! Мягкий, тёплый, арт на нём как живой. Очень доволен покупкой.", approved: true }
 ];
 
 function initDatabase() {
@@ -158,28 +160,24 @@ function initMobileNav() {
     const closeNav = function() {
         nav.classList.remove('open');
         toggle.textContent = '☰';
-        // Удаляем обработчики скролла
         document.removeEventListener('touchmove', handleTouchMove);
         document.removeEventListener('wheel', handleWheel);
         window.removeEventListener('scroll', handleScroll);
     };
 
     const handleTouchMove = function(e) {
-        // Закрываем, если касание произошло вне меню
         if (!nav.contains(e.target)) {
             closeNav();
         }
     };
 
     const handleWheel = function(e) {
-        // Закрываем, если колёсико мыши использовано вне меню
         if (!nav.contains(e.target)) {
             closeNav();
         }
     };
 
     const handleScroll = function() {
-        // Просто закрываем при любом скролле окна
         if (nav.classList.contains('open')) {
             closeNav();
         }
@@ -190,19 +188,16 @@ function initMobileNav() {
         nav.classList.toggle('open');
         toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
         if (nav.classList.contains('open')) {
-            // Добавляем обработчики только когда меню открыто
             document.addEventListener('touchmove', handleTouchMove, { passive: true });
             document.addEventListener('wheel', handleWheel, { passive: true });
             window.addEventListener('scroll', handleScroll, { passive: true });
         } else {
-            // Удаляем обработчики, если меню закрыто
             document.removeEventListener('touchmove', handleTouchMove);
             document.removeEventListener('wheel', handleWheel);
             window.removeEventListener('scroll', handleScroll);
         }
     });
 
-    // Закрываем при клике вне шапки и вне меню
     document.addEventListener('click', function(e) {
         const container = document.querySelector('.nav-container');
         if (container && !container.contains(e.target) && !nav.contains(e.target)) {
@@ -210,14 +205,12 @@ function initMobileNav() {
         }
     });
 
-    // Закрываем при клике по ссылкам внутри меню
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function() {
             closeNav();
         });
     });
 
-    // Закрываем при изменении размера окна (если становится > 768px)
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768 && nav.classList.contains('open')) {
             closeNav();
