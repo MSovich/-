@@ -103,7 +103,6 @@ const DEFAULT_NEWS = [
     { id: 2, title: "Концерт Gawr Gura в Атлантиде", content: "Виртуальный концерт состоится уже в эту субботу. Эксклюзивные брелоки в продаже.", publishedAt: "2026-05-25" }
 ];
 
-// Отзывы с привязкой к товарам
 const DEFAULT_REVIEWS = [
     { id: 1, productId: 1, author: "@AlexVtuberFan", text: "Качество худи от Gawr Gura просто нереальное. Очень плотная ткань, принт после 10 стирок как новый. Жду новый дроп!", approved: true },
     { id: 2, productId: 3, author: "@ShyShipper", text: "Заказывал брелок и футболку с Shylily. Доставка СДЭКом за 4 дня. Очень крутой минималистичный дизайн сайта, все супер.", approved: true },
@@ -112,16 +111,32 @@ const DEFAULT_REVIEWS = [
 ];
 
 function initDatabase() {
-    if (!localStorage.getItem('vtubers')) localStorage.setItem('vtubers', JSON.stringify(DEFAULT_VTUBERS));
-    if (!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify(DEFAULT_PRODUCTS));
-    if (!localStorage.getItem('arts')) localStorage.setItem('arts', JSON.stringify(DEFAULT_ARTS));
-    if (!localStorage.getItem('news')) localStorage.setItem('news', JSON.stringify(DEFAULT_NEWS));
-    if (!localStorage.getItem('reviews')) localStorage.setItem('reviews', JSON.stringify(DEFAULT_REVIEWS));
+    if (!localStorage.getItem('vtubers')) {
+        localStorage.setItem('vtubers', JSON.stringify(DEFAULT_VTUBERS));
+        console.log('✅ Втуберы инициализированы');
+    }
+    if (!localStorage.getItem('products')) {
+        localStorage.setItem('products', JSON.stringify(DEFAULT_PRODUCTS));
+        console.log('✅ Товары инициализированы');
+    }
+    if (!localStorage.getItem('arts')) {
+        localStorage.setItem('arts', JSON.stringify(DEFAULT_ARTS));
+        console.log('✅ Арты инициализированы');
+    }
+    if (!localStorage.getItem('news')) {
+        localStorage.setItem('news', JSON.stringify(DEFAULT_NEWS));
+        console.log('✅ Новости инициализированы');
+    }
+    if (!localStorage.getItem('reviews')) {
+        localStorage.setItem('reviews', JSON.stringify(DEFAULT_REVIEWS));
+        console.log('✅ Отзывы инициализированы');
+    }
     migrateProducts();
 }
 
 function migrateProducts() {
     const products = getProducts();
+    if (!products) return;
     let needUpdate = false;
     const updated = products.map(p => {
         if (!p.gallery) {
@@ -135,11 +150,26 @@ function migrateProducts() {
     }
 }
 
-function getVtubers() { return JSON.parse(localStorage.getItem('vtubers')); }
-function getProducts() { return JSON.parse(localStorage.getItem('products')); }
-function getArts() { return JSON.parse(localStorage.getItem('arts')); }
-function getNews() { return JSON.parse(localStorage.getItem('news')); }
-function getReviews() { return JSON.parse(localStorage.getItem('reviews')); }
+function getVtubers() { 
+    const data = localStorage.getItem('vtubers');
+    return data ? JSON.parse(data) : [];
+}
+function getProducts() { 
+    const data = localStorage.getItem('products');
+    return data ? JSON.parse(data) : [];
+}
+function getArts() { 
+    const data = localStorage.getItem('arts');
+    return data ? JSON.parse(data) : [];
+}
+function getNews() { 
+    const data = localStorage.getItem('news');
+    return data ? JSON.parse(data) : [];
+}
+function getReviews() { 
+    const data = localStorage.getItem('reviews');
+    return data ? JSON.parse(data) : [];
+}
 
 function renderHeaderNav() {
     const nav = document.querySelector('nav');
@@ -218,8 +248,37 @@ function initMobileNav() {
     });
 }
 
+function initAnimations() {
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-up, .reveal-image, .reveal-trigger').forEach(el => {
+        observer.observe(el);
+    });
+
+    document.querySelectorAll('.vtuber-card, .product-card, .slide-card, .review-card, .news-card, .gallery-item, .art-card').forEach(el => {
+        if (!el.classList.contains('reveal-up')) {
+            el.classList.add('reveal-up');
+            observer.observe(el);
+        }
+    });
+}
+
 initDatabase();
+
 window.addEventListener('DOMContentLoaded', () => {
     renderHeaderNav();
     initMobileNav();
+    initAnimations();
+    console.log('✅ DOM загружен, всё инициализировано');
 });

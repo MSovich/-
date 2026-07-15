@@ -52,7 +52,6 @@
             content: '← ';
         }
 
-        /* Лайтбокс */
         .modal-overlay.lightbox {
             background: rgba(0,0,0,0.9);
             backdrop-filter: blur(5px);
@@ -146,7 +145,7 @@
     </header>
     <main>
         <a href="#" class="back-link" id="backLink">Назад к втуберу</a>
-        <h2 id="galleryTitle" class="section-title">Галерея артов</h2>
+        <h2 id="galleryTitle" class="section-title reveal-up">Галерея артов</h2>
 
         <div class="gallery-grid" id="galleryGrid"></div>
 
@@ -190,7 +189,6 @@
             }
 
             title.textContent = `Галерея артов: ${vtuber.name}`;
-            // Ссылка назад ведёт на страницу втубера
             backLink.href = `vtuber.html?id=${streamerId}`;
 
             const allArts = getArts();
@@ -204,7 +202,7 @@
             currentArts = arts;
 
             grid.innerHTML = arts.map((art, index) => `
-                <div class="gallery-item" data-index="${index}">
+                <div class="gallery-item reveal-up" data-index="${index}">
                     <img src="${art.imageUrl}" alt="${art.caption || 'Арт'}">
                     <div class="caption">${art.caption || 'Без названия'}</div>
                 </div>
@@ -218,7 +216,6 @@
             });
         }
 
-        // ---------- ЛАЙТБОКС ----------
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxCaption = document.getElementById('lightboxCaption');

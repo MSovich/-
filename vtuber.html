@@ -56,7 +56,6 @@
         .social-btn:hover {
             background: #333;
         }
-
         .arts-preview {
             margin-top: 30px;
             border-top: 1px solid var(--border-color);
@@ -108,7 +107,6 @@
         .arts-preview .view-all-btn:hover {
             background: var(--accent-hover);
         }
-
         .shop-btn {
             background: var(--accent-color);
             border: none;
@@ -127,7 +125,6 @@
         .shop-btn:hover {
             background: var(--accent-hover);
         }
-
         .back-link {
             display: inline-block;
             margin-bottom: 30px;
@@ -180,7 +177,6 @@
         </div>
     </header>
     <main>
-        <!-- Кнопка "← Все втуберы" ведёт на wiki.html -->
         <a href="wiki.html" class="back-link">Все втуберы</a>
 
         <div id="vtuber-content">
@@ -198,6 +194,15 @@
 
         function renderVtuber() {
             const vtubers = getVtubers();
+            if (!vtubers || vtubers.length === 0) {
+                document.getElementById('vtuber-content').innerHTML = `
+                    <div style="text-align:center; padding: 60px 0;">
+                        <h2 style="color: var(--text-muted);">Нет данных о втуберах. Попробуйте обновить страницу.</h2>
+                        <a href="wiki.html" class="btn-primary" style="margin-top:20px;">Вернуться в вики</a>
+                    </div>
+                `;
+                return;
+            }
             const vtuber = vtubers.find(v => v.id === vtuberId);
             const container = document.getElementById('vtuber-content');
 
@@ -233,7 +238,7 @@
             }
 
             container.innerHTML = `
-                <div class="vtuber-detail">
+                <div class="vtuber-detail reveal-up visible">
                     <div class="vtuber-photo">
                         <img src="${vtuber.photo}" alt="${vtuber.name}">
                     </div>
@@ -251,7 +256,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="arts-preview">
+                <div class="arts-preview reveal-up visible">
                     <h3>Галерея артов</h3>
                     ${artsHtml}
                 </div>

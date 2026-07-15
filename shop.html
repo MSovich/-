@@ -6,7 +6,6 @@
     <title>Официальный Мерч-Магазин - VTuber Hub</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ---- ОСНОВНЫЕ СТИЛИ ---- */
         .shop-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -55,6 +54,11 @@
             font-size: 12px;
             margin-bottom: 15px;
             flex-grow: 1;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            overflow: hidden;
         }
         .product-price-row {
             display: flex;
@@ -104,7 +108,6 @@
             pointer-events: auto;
         }
 
-        /* ---- ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ ---- */
         .filter-dropdown {
             position: relative;
             margin-bottom: 20px;
@@ -124,6 +127,8 @@
             font-size: 14px;
             font-weight: 600;
             user-select: none;
+            overflow: hidden;
+            white-space: nowrap;
         }
         .filter-toggle:hover {
             border-color: #444;
@@ -145,10 +150,17 @@
         .filter-toggle .burger-icon span:nth-child(2) {
             width: 80%;
         }
+        .filter-toggle .filter-label {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
         .filter-toggle .arrow {
             margin-left: auto;
             transition: transform 0.3s ease;
             font-size: 16px;
+            flex-shrink: 0;
         }
         .filter-toggle.open .arrow {
             transform: rotate(180deg);
@@ -172,7 +184,6 @@
         .filter-panel.open {
             display: flex !important;
         }
-
         .filter-options {
             flex: 1;
             overflow-y: auto;
@@ -192,7 +203,6 @@
         .filter-options::-webkit-scrollbar-thumb:hover {
             background: var(--accent-color);
         }
-
         .filter-option {
             display: flex;
             align-items: center;
@@ -218,15 +228,14 @@
             cursor: pointer;
             flex: 1;
         }
-
         .filter-divider {
             border: none;
             border-top: 1px solid var(--border-color);
             margin: 0;
         }
-
         .filter-actions {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             padding: 12px 16px;
             background: var(--card-bg);
@@ -242,6 +251,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s ease;
+            width: 100%;
+            text-align: center;
         }
         .filter-actions .filter-reset {
             background: transparent;
@@ -260,7 +271,6 @@
         .filter-actions .filter-apply:hover {
             background: var(--accent-hover);
         }
-
         .filter-count {
             background: var(--accent-color);
             color: white;
@@ -274,22 +284,19 @@
             align-items: center;
             justify-content: center;
             margin-left: auto;
+            flex-shrink: 0;
         }
 
-        /* ---- ПЛАНШЕТЫ (до 1024px) ---- */
         @media (max-width: 1024px) {
             .shop-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 15px;
             }
         }
-
-        /* ---- МОБИЛЬНЫЕ ТЕЛЕФОНЫ (до 768px) ---- */
         @media (max-width: 768px) {
             body { overflow-x: hidden; }
             main { padding: 15px 10px !important; max-width: 100% !important; }
             .two-column-layout { display: block !important; width: 100%; }
-
             .sidebar {
                 width: 100% !important;
                 padding: 10px 8px !important;
@@ -304,7 +311,6 @@
                 width: 100%;
                 box-sizing: border-box;
             }
-
             .filter-toggle {
                 padding: 10px 14px;
                 font-size: 14px;
@@ -336,7 +342,6 @@
                 padding: 12px;
                 font-size: 15px;
             }
-
             .shop-grid {
                 display: flex;
                 flex-direction: column;
@@ -371,10 +376,8 @@
             .product-desc {
                 font-size: 12px;
                 margin-bottom: 6px;
-                display: -webkit-box;
                 -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+                line-clamp: 2;
             }
             .size-select { font-size: 14px; padding: 6px 4px; margin-bottom: 5px; }
             .buy-btn { font-size: 14px; padding: 8px 10px; min-height: 38px; }
@@ -382,8 +385,6 @@
             .product-price-row { flex-wrap: wrap; gap: 6px; }
             .product-price-row .buy-btn { flex: 1 1 100%; }
         }
-
-        /* ---- ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 480px) ---- */
         @media (max-width: 480px) {
             main { padding: 10px 6px !important; }
             .sidebar { padding: 8px 5px !important; }
@@ -394,18 +395,19 @@
             .filter-option label { font-size: 14px; }
             .filter-actions { padding: 8px 10px; }
             .filter-actions button { padding: 10px; font-size: 14px; }
-
             .product-card { min-height: 100px; border-radius: 8px; }
             .product-img { width: 100px; min-height: 100px; }
             .product-info { padding: 8px 10px; }
             .product-title { font-size: 14px; }
-            .product-desc { font-size: 11px; -webkit-line-clamp: 2; }
+            .product-desc {
+                font-size: 11px;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+            }
             .size-select { font-size: 13px; padding: 5px 3px; }
             .buy-btn { font-size: 13px; padding: 6px 8px; min-height: 34px; }
             .product-price { font-size: 15px; }
         }
-
-        /* ---- ПЛАНШЕТЫ В ЛАНДШАФТЕ ---- */
         @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
             .shop-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
             .product-img { height: 180px; }
@@ -427,8 +429,6 @@
         <div class="two-column-layout">
             <div class="sidebar">
                 <input type="text" class="search-bar" placeholder="Поиск мерча..." id="shop-search" oninput="filterShop()">
-
-                <!-- ФИЛЬТР С ПРОКРУТКОЙ И СТАТИЧНЫМИ КНОПКАМИ -->
                 <div class="filter-dropdown" id="filterDropdown">
                     <div class="filter-toggle" id="filterToggle">
                         <span class="burger-icon">
@@ -436,7 +436,7 @@
                             <span></span>
                             <span></span>
                         </span>
-                        <span>Фильтр по стримерам</span>
+                        <span class="filter-label">Фильтр по стримерам</span>
                         <span class="filter-count" id="filterCount">0</span>
                         <span class="arrow">▼</span>
                     </div>
@@ -454,7 +454,6 @@
         </div>
     </main>
 
-    <!-- Модальное окно заказа -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal">
             <div class="modal-header">
@@ -479,15 +478,12 @@
     </footer>
     <script src="app.js"></script>
     <script>
-        // ---------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ----------
         let selectedStreamers = new Set();
 
-        // ---------- РАБОТА С SESSION STORAGE ----------
         function saveFilters() {
             const data = Array.from(selectedStreamers);
             sessionStorage.setItem('shopFilters', JSON.stringify(data));
         }
-
         function loadFilters() {
             const saved = sessionStorage.getItem('shopFilters');
             if (saved) {
@@ -502,7 +498,6 @@
             return false;
         }
 
-        // ---------- ОТРИСОВКА ЧЕКБОКСОВ ----------
         function renderFilterCheckboxes() {
             const vtubers = getVtubers();
             const container = document.getElementById('filterOptions');
@@ -524,13 +519,11 @@
             });
         }
 
-        // ---------- ОБНОВЛЕНИЕ СЧЁТЧИКА ----------
         function updateFilterCount() {
             const count = selectedStreamers.size;
             document.getElementById('filterCount').textContent = count;
         }
 
-        // ---------- УПРАВЛЕНИЕ ПАНЕЛЬЮ ----------
         function closeFilterPanel() {
             const panel = document.getElementById('filterPanel');
             const toggle = document.getElementById('filterToggle');
@@ -538,7 +531,6 @@
             toggle.classList.remove('open');
             panel.style.display = 'none';
         }
-
         function openFilterPanel() {
             const panel = document.getElementById('filterPanel');
             const toggle = document.getElementById('filterToggle');
@@ -546,7 +538,6 @@
             toggle.classList.add('open');
             panel.style.display = 'flex';
         }
-
         function toggleFilterPanel() {
             const panel = document.getElementById('filterPanel');
             if (panel.classList.contains('open')) {
@@ -555,7 +546,6 @@
                 openFilterPanel();
             }
         }
-
         function initFilterDropdown() {
             const toggle = document.getElementById('filterToggle');
             toggle.addEventListener('click', function(e) {
@@ -574,7 +564,6 @@
             });
         }
 
-        // ---------- ПРИМЕНЕНИЕ ФИЛЬТРА ----------
         function applyFilter() {
             const checked = document.querySelectorAll('#filterOptions input[type="checkbox"]:checked');
             selectedStreamers.clear();
@@ -586,37 +575,32 @@
             renderProducts();
             closeFilterPanel();
         }
-
         function resetFilter() {
             document.querySelectorAll('#filterOptions input[type="checkbox"]').forEach(cb => {
                 cb.checked = false;
             });
             selectedStreamers.clear();
             updateFilterCount();
-            saveFilters(); // сохраняем пустой массив
+            saveFilters();
             renderProducts();
             closeFilterPanel();
         }
 
-        // ---------- ФИЛЬТРАЦИЯ ТОВАРОВ ----------
         function renderProducts() {
             const products = getProducts();
             const grid = document.getElementById('shop-products-grid');
             const searchVal = document.getElementById('shop-search').value.toLowerCase();
-
             const filtered = products.filter(p => {
                 const matchesStreamer = selectedStreamers.size === 0 || selectedStreamers.has(p.vtuberId);
                 const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
                 return matchesStreamer && matchesSearch;
             });
-
             if (filtered.length === 0) {
                 grid.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 30px 0;">Товары не найдены</p>';
                 return;
             }
-
             grid.innerHTML = filtered.map(p => `
-                <div class="product-card" data-id="${p.id}" onclick="goToProduct(${p.id})">
+                <div class="product-card reveal-up" data-id="${p.id}" onclick="goToProduct(${p.id})">
                     <div class="product-img"><img src="${p.photo}" alt="${p.title}"></div>
                     <div class="product-info">
                         <div class="product-title">${p.title}</div>
@@ -636,15 +620,11 @@
             `).join('');
         }
 
-        function filterShop() {
-            renderProducts();
-        }
-
+        function filterShop() { renderProducts(); }
         function goToProduct(id) {
             window.location.href = `product.html?id=${id}`;
         }
 
-        // ---------- МОДАЛЬНОЕ ОКНО ЗАКАЗА ----------
         function openOrderModal(product, size) {
             const modal = document.getElementById('orderModal');
             document.getElementById('orderModalText').innerHTML = 
@@ -655,15 +635,12 @@
             modal.dataset.size = size;
             modal.classList.add('active');
         }
-
         function closeOrderModal() {
             document.getElementById('orderModal').classList.remove('active');
         }
-
         document.getElementById('orderModal').addEventListener('click', function(e) {
             if (e.target === this) closeOrderModal();
         });
-
         document.getElementById('orderModalConfirm').addEventListener('click', function() {
             const modal = document.getElementById('orderModal');
             const productId = parseInt(modal.dataset.productId);
@@ -696,32 +673,25 @@
             openOrderModal(product, size);
         }
 
-        // ---------- ИНИЦИАЛИЗАЦИЯ ----------
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const streamerParam = urlParams.get('streamer');
-
-            // Если есть параметр streamer, сбрасываем все фильтры и устанавливаем только этого стримера
             if (streamerParam) {
                 selectedStreamers.clear();
                 selectedStreamers.add(streamerParam);
-                saveFilters(); // перезаписываем sessionStorage
+                saveFilters();
             } else {
-                // Иначе загружаем сохранённые фильтры
                 const hasSaved = loadFilters();
                 if (!hasSaved) {
                     selectedStreamers.clear();
                     saveFilters();
                 }
             }
-
             renderFilterCheckboxes();
             updateFilterCount();
             initFilterDropdown();
-
             document.getElementById('filterReset').addEventListener('click', resetFilter);
             document.getElementById('filterApply').addEventListener('click', applyFilter);
-
             renderProducts();
         });
     </script>

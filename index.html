@@ -6,8 +6,18 @@
     <title>VTuber Hub - Официальный мерч и Википедия</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .hero { text-align: center; padding: 80px 20px 100px 20px; }
-        .hero h1 { font-size: 52px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; line-height: 1.2; }
+        .hero { text-align: center; padding: 80px 20px 100px 20px; position: relative; }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #FFF 0%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .hero p { color: var(--text-muted); font-size: 19px; max-width: 650px; margin: 0 auto 40px auto; }
         .merch-slider { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 80px; }
         .slide-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease; cursor: pointer; }
@@ -22,19 +32,9 @@
         .review-author { font-weight: 600; margin-bottom: 5px; font-size: 14px; }
         .review-text { color: var(--text-muted); font-size: 14px; font-style: italic; }
         .news-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 50px; border-radius: 8px; margin-bottom: 60px; text-align: center; }
-        .review-cta {
-            text-align: center;
-            margin: 0 0 60px 0;
-        }
-        .review-cta p {
-            color: var(--text-muted);
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        .review-cta .btn-primary {
-            padding: 14px 40px;
-            font-size: 18px;
-        }
+        .review-cta { text-align: center; margin: 0 0 60px 0; }
+        .review-cta p { color: var(--text-muted); font-size: 16px; margin-bottom: 15px; }
+        .review-cta .btn-primary { padding: 14px 40px; font-size: 18px; }
     </style>
 </head>
 <body>
@@ -48,22 +48,22 @@
     <main>
         <section class="hero">
             <h1>Официальный мерч и база знаний ваших любимых VTubers</h1>
-            <p>Мы создаем премиальный лимитированный мерч в тесном сотрудничестве с лучшими втуберами. Читайте лор, переходите в магазин и выбирайте лучшее.</p>
-            <a href="shop.html" class="hero-btn">Перейти в Магазин</a>
+            <p class="hero-subtitle reveal-up">Мы создаем премиальный лимитированный мерч в тесном сотрудничестве с лучшими втуберами. Читайте лор, переходите в магазин и выбирайте лучшее.</p>
+            <a href="shop.html" class="hero-btn reveal-up" style="animation-delay: 0.4s;">Перейти в Магазин</a>
         </section>
-        <h2 class="section-title">Лучший мерч недели</h2>
+
+        <h2 class="section-title reveal-up">Лучший мерч недели</h2>
         <div class="merch-slider" id="home-featured-merch"></div>
 
-        <h2 class="section-title">Отзывы покупателей</h2>
+        <h2 class="section-title reveal-up">Отзывы покупателей</h2>
         <div class="reviews-grid" id="home-reviews-container"></div>
 
-        <!-- Кнопка "Оставить отзыв" с той же ссылкой на Telegram -->
-        <div class="review-cta">
+        <div class="review-cta reveal-up">
             <p>Поделитесь своим опытом — мы ценим каждого покупателя!</p>
             <a href="https://web.telegram.org/a/#8320234702" target="_blank" class="btn-primary">Оставить отзыв</a>
         </div>
 
-        <div class="news-section" id="home-news-container"></div>
+        <div class="news-section reveal-up" id="home-news-container"></div>
     </main>
     <footer>
         <p>Контакты для связи: support@vtuberhub.com | Telegram: @vtuberhub_support</p>
