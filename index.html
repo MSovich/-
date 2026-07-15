@@ -17,11 +17,24 @@
         .slide-info { padding: 18px; }
         .slide-info h3 { font-size: 16px; margin-bottom: 5px; }
         .slide-info p { color: var(--text-muted); font-size: 14px; }
-        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 80px; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .review-card { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; border-radius: 6px; }
         .review-author { font-weight: 600; margin-bottom: 5px; font-size: 14px; }
         .review-text { color: var(--text-muted); font-size: 14px; font-style: italic; }
         .news-section { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 50px; border-radius: 8px; margin-bottom: 60px; text-align: center; }
+        .review-cta {
+            text-align: center;
+            margin: 0 0 60px 0;
+        }
+        .review-cta p {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .review-cta .btn-primary {
+            padding: 14px 40px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -40,8 +53,16 @@
         </section>
         <h2 class="section-title">Лучший мерч недели</h2>
         <div class="merch-slider" id="home-featured-merch"></div>
+
         <h2 class="section-title">Отзывы покупателей</h2>
         <div class="reviews-grid" id="home-reviews-container"></div>
+
+        <!-- НОВЫЙ БЛОК: Кнопка "Оставить отзыв" -->
+        <div class="review-cta">
+            <p>Поделитесь своим опытом — мы ценим каждого покупателя!</p>
+            <a href="https://t.me/vtuberhub_support?text=Хочу%20оставить%20отзыв" target="_blank" class="btn-primary">Оставить отзыв</a>
+        </div>
+
         <div class="news-section" id="home-news-container"></div>
     </main>
     <footer>
