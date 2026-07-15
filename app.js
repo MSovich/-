@@ -155,37 +155,21 @@ function initMobileNav() {
     const nav = document.querySelector('nav');
     if (!toggle || !nav) return;
 
-    // Функция закрытия меню
     const closeNav = function() {
         nav.classList.remove('open');
         toggle.textContent = '☰';
     };
 
-    // Открытие/закрытие по кнопке
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
         nav.classList.toggle('open');
         toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
     });
 
-    // Закрываем при клике вне шапки
+    // Закрываем при клике вне шапки и вне меню
     document.addEventListener('click', function(e) {
         const container = document.querySelector('.nav-container');
-        if (container && !container.contains(e.target)) {
-            closeNav();
-        }
-    });
-
-    // Закрываем при скролле (на всех устройствах)
-    window.addEventListener('scroll', function() {
-        if (nav.classList.contains('open')) {
-            closeNav();
-        }
-    });
-
-    // Закрываем при изменении размера окна (если становится > 768px)
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && nav.classList.contains('open')) {
+        if (container && !container.contains(e.target) && !nav.contains(e.target)) {
             closeNav();
         }
     });
@@ -195,6 +179,16 @@ function initMobileNav() {
         link.addEventListener('click', function() {
             closeNav();
         });
+    });
+
+    // НЕ закрываем при скролле (убрано)
+    // window.addEventListener('scroll', closeNav);
+
+    // Закрываем при изменении размера окна (если становится > 768px)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && nav.classList.contains('open')) {
+            closeNav();
+        }
     });
 }
 
