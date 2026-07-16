@@ -189,6 +189,7 @@ function initMobileNav() {
 
     const closeNav = function() {
         nav.classList.remove('open');
+        document.body.classList.remove('menu-open');
         toggle.textContent = '☰';
         document.removeEventListener('touchmove', handleTouchMove);
         document.removeEventListener('wheel', handleWheel);
@@ -215,16 +216,16 @@ function initMobileNav() {
 
     toggle.addEventListener('click', function(e) {
         e.stopPropagation();
-        nav.classList.toggle('open');
-        toggle.textContent = nav.classList.contains('open') ? '✕' : '☰';
-        if (nav.classList.contains('open')) {
+        const isOpen = nav.classList.contains('open');
+        if (isOpen) {
+            closeNav();
+        } else {
+            nav.classList.add('open');
+            document.body.classList.add('menu-open');
+            toggle.textContent = '✕';
             document.addEventListener('touchmove', handleTouchMove, { passive: true });
             document.addEventListener('wheel', handleWheel, { passive: true });
             window.addEventListener('scroll', handleScroll, { passive: true });
-        } else {
-            document.removeEventListener('touchmove', handleTouchMove);
-            document.removeEventListener('wheel', handleWheel);
-            window.removeEventListener('scroll', handleScroll);
         }
     });
 
