@@ -1267,6 +1267,7 @@ footer a:hover { color: var(--accent-hover); }
     .nav-container {
         flex-wrap: wrap;
         padding: 10px 15px;
+        overflow: visible !important; /* добавлено для видимости меню */
     }
     .nav-toggle {
         display: block;
@@ -1284,7 +1285,13 @@ footer a:hover { color: var(--accent-hover); }
         margin-top: 10px;
     }
     nav.open {
-        display: flex;
+        display: flex !important;      /* принудительное отображение */
+        position: relative;
+        z-index: 10001;               /* выше header */
+    }
+    /* гарантируем, что header не обрезает меню */
+    header {
+        overflow: visible !important;
     }
     nav a {
         padding: 12px 0;
