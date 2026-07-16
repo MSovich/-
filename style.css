@@ -1185,6 +1185,46 @@ footer a {
 }
 footer a:hover { color: var(--accent-hover); }
 
+/* ===== ФИКСИРОВАННОЕ МЕНЮ ДЛЯ МОБИЛЬНЫХ (решение проблемы) ===== */
+body.menu-open {
+    overflow: hidden !important; /* блокируем скролл */
+}
+body.menu-open header {
+    z-index: 100000 !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+body.menu-open nav.open {
+    display: flex !important;
+    position: fixed !important;
+    top: 60px; /* высота хедера (задайте под свою) */
+    left: 0;
+    right: 0;
+    bottom: auto;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 100001 !important;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px 20px;
+    gap: 5px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+body.menu-open nav.open a {
+    padding: 12px 0;
+    text-align: center;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+body.menu-open nav.open a:last-child {
+    border-bottom: none;
+}
+
 /* ===== АДАПТИВНОСТЬ ===== */
 
 @media (max-width: 1024px) {
@@ -1267,7 +1307,7 @@ footer a:hover { color: var(--accent-hover); }
     .nav-container {
         flex-wrap: wrap;
         padding: 10px 15px;
-        overflow: visible !important; /* добавлено для видимости меню */
+        overflow: visible !important;
     }
     .nav-toggle {
         display: block;
@@ -1284,23 +1324,11 @@ footer a:hover { color: var(--accent-hover); }
         border-top: 1px solid var(--border-color);
         margin-top: 10px;
     }
+    /* для обычного состояния (не фиксированного) — оставляем как есть */
     nav.open {
-        display: flex !important;      /* принудительное отображение */
+        display: flex !important;
         position: relative;
-        z-index: 10001;               /* выше header */
-    }
-    /* гарантируем, что header не обрезает меню */
-    header {
-        overflow: visible !important;
-    }
-    nav a {
-        padding: 12px 0;
-        text-align: center;
-        font-size: 1rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-    nav a:last-child {
-        border-bottom: none;
+        z-index: 10001;
     }
     .logo {
         order: 1;
